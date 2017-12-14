@@ -4,14 +4,14 @@ from setuptools import setup
 
 
 setup(
-    name="Amount in Words",
-    version='0.1.0',
+    name="Float To Words",
+    version='0.2.0',
     author="Focusate",
     author_email="dev@focusate.eu",
     url='git@github.com:focusate/extra-tools.git',
     license='MIT',
     long_description=open('README.rst').read(),
-    py_modules=['amount2words', ],
+    py_modules=['float2words', ],
     install_requires=[
         'num2words',
     ],

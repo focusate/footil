@@ -3,8 +3,7 @@ Various Python Helpers for Developers
 
 This repository includes:
 
- - amount2words - converting amount to words by given optional
-    parameters: language, currency, connector.
+ * float2words - converting float numbers to words.
 
 Contributors
 ============
