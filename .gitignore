@@ -1,2 +1,7 @@
 *.pyc
 *~
+
+# Distribution / packaging
+*.egg-info/
+build/
+dist/
