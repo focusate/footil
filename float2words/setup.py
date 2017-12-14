@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name="Float To Words",
-    version='0.2.0',
+    version='0.3.0',
     author="Focusate",
     author_email="dev@focusate.eu",
     url='git@github.com:focusate/extra-tools.git',

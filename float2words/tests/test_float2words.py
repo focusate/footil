@@ -61,3 +61,12 @@ class TestFloat2Words(unittest.TestCase):
             'thirteen kg and two hundred and thirty g',
             "Incorrect float conversion to words!"
         )
+
+    def test_floatw2words_7(self):
+        """Test with Lithuanian language and ' ir ' connector."""
+        self.assertEqual(
+            self.Float2Words(13.23, 'lt_LT', sfx1='kg', sfx2='g',
+                             precision=3, connector=' ir '),
+            'trylika kg ir du šimtai trisdešimt g',
+            "Incorrect float conversion to words!"
+        )
