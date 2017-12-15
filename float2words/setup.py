@@ -4,11 +4,11 @@ from setuptools import setup
 
 
 setup(
-    name="Float To Words",
-    version='0.5.0',
+    name="float2words",
+    version='0.6.0',
     author="Focusate",
     author_email="dev@focusate.eu",
-    url='git@github.com:focusate/extra-tools.git',
+    url='https://github.com/focusate/extra-tools',
     license='MIT',
     long_description=open('README.rst').read(),
     py_modules=['float2words', ],
