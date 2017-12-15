@@ -47,6 +47,8 @@ def float2words(number, lang, sfx1='', sfx2='', connector=', ', precision=2):
     """
     whole_part, decimal_part = _split_float(number, precision)
     number_in_words = ''.join([
+        # we add whitespace before suffix if it is passed for better
+        # readability .
         ' '.join(filter(None, [num2words(whole_part, lang=lang), sfx1])),
         connector,
         ' '.join(filter(None, [num2words(decimal_part, lang=lang), sfx2]))
