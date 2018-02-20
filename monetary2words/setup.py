@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name="monetary2words",
-    version='0.2.0',
+    version='0.3.0',
     author="Focusate",
     author_email="dev@focusate.eu",
     url='https://github.com/focusate/extra-tools',

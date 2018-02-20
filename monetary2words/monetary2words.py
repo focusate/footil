@@ -5,7 +5,7 @@ from float2words import float2words
 currency_mapping = {
     'EUR': {
         'symbol': '€',
-        'subunit_shorten': {
+        'subunit_abbr': {
             # Cents
             'en': 'ct.',
             'et': 'st.',
@@ -17,7 +17,7 @@ currency_mapping = {
     },
     'GBP': {
         'symbol': '£',
-        'subunit_shorten': {
+        'subunit_abbr': {
             # Pence
             'en': 'p.',
             'et': 'p.',
@@ -29,7 +29,7 @@ currency_mapping = {
     },
     'PLN': {
         'symbol': 'zł',
-        'subunit_shorten': {
+        'subunit_abbr': {
             # Groszy
             'en': 'gr.',
             'et': 'gr.',
@@ -41,7 +41,7 @@ currency_mapping = {
     },
     'RUB': {
         'symbol': '₽',
-        'subunit_shorten': {
+        'subunit_abbr': {
             # Kopeks
             'en': 'kop.',
             'et': 'kop.',
@@ -53,7 +53,7 @@ currency_mapping = {
     },
     'USD': {
         'symbol': '$',
-        'subunit_shorten': {
+        'subunit_abbr': {
             # Cents
             'en': 'ct.',
             'et': 'st.',
@@ -78,8 +78,8 @@ def monetary2words(number, language, currency_code, connector=', ',
         connector (string): connector will be used between whole and
             decimal parts expressed in words.
         precision (int): number of digits after decimal point.
-        use_symbol (boolean): if True - currency symbol will be used instead of
-            default ISO language code.
+        use_symbol (boolean): whether to use currency symbol or currency ISO
+            code.
 
     Returns:
         number_in_words (string): monetary number in words.
@@ -91,13 +91,13 @@ def monetary2words(number, language, currency_code, connector=', ',
     currency = currency_mapping[currency_code]
     # We check if full language code is implemented and then check with first
     # two letters if it's not.
-    subunit_shorten = currency['subunit_shorten']
-    if language not in subunit_shorten:
+    subunit_abbr = currency['subunit_abbr']
+    if language not in subunit_abbr:
         language = language[:2]
-    if language not in subunit_shorten:
+    if language not in subunit_abbr:
         raise NotImplementedError(
             "Language '%s' is not implemented for currency '%s'!" % (
                 language, currency_code))
     currency_code = currency['symbol'] if use_symbol else currency_code
     return float2words(number, language, currency_code,
-                       subunit_shorten[language], connector, precision)
+                       subunit_abbr[language], connector, precision)
