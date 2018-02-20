@@ -26,7 +26,7 @@ class TestMonetary2Words(unittest.TestCase):
         """Test with English language (shorten code) and USD currency."""
         self.assertEqual(
             self.Monetary2Words(13.23, 'en', 'USD'),
-            'thirteen USD, twenty-three ct.',
+            'thirteen $, twenty-three ct.',
             "Monetary value was not correctly converted to words!"
         )
 
@@ -34,7 +34,7 @@ class TestMonetary2Words(unittest.TestCase):
         """Test with English language (full code) and USD currency."""
         self.assertEqual(
             self.Monetary2Words(13.23, 'en_US', 'USD'),
-            'thirteen USD, twenty-three ct.',
+            'thirteen $, twenty-three ct.',
             "Monetary value was not correctly converted to words!"
         )
 
@@ -42,7 +42,7 @@ class TestMonetary2Words(unittest.TestCase):
         """Test with Russian language (full code) and RUB currency."""
         self.assertEqual(
             self.Monetary2Words(13.23, 'ru_RU', 'RUB'),
-            'тринадцать RUB, двадцать три коп.',
+            'тринадцать ₽, двадцать три коп.',
             "Monetary value was not correctly converted to words!"
         )
 
@@ -50,6 +50,14 @@ class TestMonetary2Words(unittest.TestCase):
         """Test with Lithuanian language (full code) and EUR currency."""
         self.assertEqual(
             self.Monetary2Words(13.23, 'lt_LT', 'EUR'),
+            'trylika €, dvidešimt trys ct.',
+            "Monetary value was not correctly converted to words!"
+        )
+
+    def test_monetary2words_7(self):
+        """Test with Lithuanian language, EUR currency and it's ISO code."""
+        self.assertEqual(
+            self.Monetary2Words(13.23, 'lt_LT', 'EUR', use_symbol=False),
             'trylika EUR, dvidešimt trys ct.',
             "Monetary value was not correctly converted to words!"
         )

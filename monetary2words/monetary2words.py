@@ -2,57 +2,72 @@
 
 from float2words import float2words
 
-subunit_mapping = {
+currency_mapping = {
     'EUR': {
-        # Cents
-        'en': 'ct.',
-        'et': 'st.',
-        'lt': 'ct.',
-        'lv': 'ct.',
-        'pl': 'ct.',
-        'ru': 'цт.',
+        'symbol': '€',
+        'subunit_shorten': {
+            # Cents
+            'en': 'ct.',
+            'et': 'st.',
+            'lt': 'ct.',
+            'lv': 'ct.',
+            'pl': 'ct.',
+            'ru': 'цт.',
+        },
     },
     'GBP': {
-        # Pence
-        'en': 'p.',
-        'et': 'p.',
-        'lt': 'p.',
-        'lv': 'p.',
-        'pl': 'p.',
-        'ru': 'п.',
+        'symbol': '£',
+        'subunit_shorten': {
+            # Pence
+            'en': 'p.',
+            'et': 'p.',
+            'lt': 'p.',
+            'lv': 'p.',
+            'pl': 'p.',
+            'ru': 'п.',
+        },
     },
     'PLN': {
-        # Groszy
-        'en': 'gr.',
-        'et': 'gr.',
-        'lt': 'gr.',
-        'lv': 'gr.',
-        'pl': 'gr.',
-        'ru': 'гр.',
+        'symbol': 'zł',
+        'subunit_shorten': {
+            # Groszy
+            'en': 'gr.',
+            'et': 'gr.',
+            'lt': 'gr.',
+            'lv': 'gr.',
+            'pl': 'gr.',
+            'ru': 'гр.',
+        },
     },
     'RUB': {
-        # Kopeks
-        'en': 'kop.',
-        'et': 'kop.',
-        'lt': 'kap.',
-        'lv': 'kap.',
-        'pl': 'kop.',
-        'ru': 'коп.',
+        'symbol': '₽',
+        'subunit_shorten': {
+            # Kopeks
+            'en': 'kop.',
+            'et': 'kop.',
+            'lt': 'kap.',
+            'lv': 'kap.',
+            'pl': 'kop.',
+            'ru': 'коп.',
+        },
     },
     'USD': {
-        # Cents
-        'en': 'ct.',
-        'et': 'st.',
-        'lt': 'ct.',
-        'lv': 'ct.',
-        'pl': 'ct.',
-        'ru': 'цт.',
+        'symbol': '$',
+        'subunit_shorten': {
+            # Cents
+            'en': 'ct.',
+            'et': 'st.',
+            'lt': 'ct.',
+            'lv': 'ct.',
+            'pl': 'ct.',
+            'ru': 'цт.',
+        },
     },
 }
 
 
-def monetary2words(
-        number, language, currency_code, connector=', ', precision=2):
+def monetary2words(number, language, currency_code, connector=', ',
+                   precision=2, use_symbol=True):
     """Convert monetary to words by given optional parameters.
 
     Arguments:
@@ -63,22 +78,26 @@ def monetary2words(
         connector (string): connector will be used between whole and
             decimal parts expressed in words.
         precision (int): number of digits after decimal point.
+        use_symbol (boolean): if True - currency symbol will be used instead of
+            default ISO language code.
 
     Returns:
         number_in_words (string): monetary number in words.
 
     """
-    if currency_code not in subunit_mapping:
+    if currency_code not in currency_mapping:
         raise NotImplementedError(
             "Currency code '%s' is not implemented!" % currency_code)
-    currency = subunit_mapping[currency_code]
+    currency = currency_mapping[currency_code]
     # We check if full language code is implemented and then check with first
     # two letters if it's not.
-    if language not in currency:
+    subunit_shorten = currency['subunit_shorten']
+    if language not in subunit_shorten:
         language = language[:2]
-    if language not in currency:
+    if language not in subunit_shorten:
         raise NotImplementedError(
             "Language '%s' is not implemented for currency '%s'!" % (
                 language, currency_code))
-    return float2words(number, language, currency_code, currency[language],
-                       connector, precision)
+    currency_code = currency['symbol'] if use_symbol else currency_code
+    return float2words(number, language, currency_code,
+                       subunit_shorten[language], connector, precision)
