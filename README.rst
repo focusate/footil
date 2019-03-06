@@ -1,12 +1,13 @@
-Various Python Helpers for Developers
-=====================================
+Various helper modules
+======================
 
-This repository includes:
+Has these modules:
 
- * float2words - converting float numbers to words.
- * monetary2words - converting monetary numbers to words.
+* decor - helper decorators.
+* log - helpers with stdout, stderr management.
 
 Contributors
 ============
 
 * Silvija Butko (Focusate)
+* Andrius Laukavičius (Focusate)
