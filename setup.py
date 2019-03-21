@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='footil',
-    version='0.4.0',
+    version='0.5.0',
     packages=['footil'],
     license='LGPLv3',
     url='https://github.com/focusate/footil',
@@ -11,11 +11,13 @@ setup(
     install_requires=['yattag'],
     maintainer='Andrius Laukavičius',
     maintainer_email='dev@focusate.eu',
-    python_requires='>=3',
+    python_requires='>=3.5',
     classifiers=[
         'Environment :: Other Environment',
         'Intended Audience :: Developers',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Software Development',
         'Topic :: Utilities',
     ],
