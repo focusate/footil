@@ -1,5 +1,7 @@
+"""Module providing various helper decorators."""
 import time
 import logging
+import inspect
 from typing import Optional
 
 
@@ -105,4 +107,107 @@ class _TimeIt(object):
         return wrapped
 
 
+class _CatchExceptions(object):
+    """Decorator class to catch exceptions on function run."""
+
+    def __init__(self, exceptions_lst, err_msg_pos=0):
+        """Init exceptions config."""
+        self.exceptions_lst = exceptions_lst
+        self.err_msg_pos = err_msg_pos
+
+    def _get_exceptions(self):
+        # tuple is required when using exceptions in catching.
+        return tuple(
+            [exc_item['exception'] for exc_item in self.exceptions_lst])
+
+    @staticmethod
+    def _is_bound_method(method):
+        return hasattr(method, '__self__')
+
+    @classmethod
+    def _map_args_kwargs(cls, func, *fn_args, **fn_kwargs):
+        def combine_args_kwargs(args, kwargs):
+            return {'args': tuple(args), 'kwargs': kwargs}
+
+        # Make copies from args and kwargs to not modify original
+        # arguments passed. Shallow copy is enough here, because values
+        # itself are not modified, only add and remove operations are
+        # made.
+        args = list(fn_args)  # converted back to tuple in the end.
+        kwargs = dict(fn_kwargs)
+        spec = inspect.getfullargspec(func)
+        # If method is bound, it means first argument is an instance of
+        # some class. In that case we insert it into args as first
+        # argument.
+        if cls._is_bound_method(func):
+            args.insert(0, func.__self__)
+        # If we have *args, it means kwargs can't be specified as
+        # positional arguments or if we do not have defaults, it means
+        # only positional arguments can be used as positional. In both
+        # cases, no further mapping is needed.
+        if spec.varargs or not spec.defaults:
+            return combine_args_kwargs(args, kwargs)
+        # Get number of kw and real positional arguments.
+        kwargs_num = len(spec.defaults)
+        args_num = len(spec.args)
+        real_args_num = args_num - kwargs_num
+        # Check if real positional arguments match all positional
+        # arguments. If it does, it means all kwargs were used as kwargs
+        # and not as positional arguments.
+        fake_args_num = len(args) - real_args_num
+        if not fake_args_num:
+            return combine_args_kwargs(args, kwargs)
+        # Find kwargs that are used as positional arguments.
+        args = list(args)
+        # pop fake positional arguments and put it back into kwargs.
+        # Need to start from the end of index range, because poping
+        # items in increasing order, would mess up index.
+        for index in range(real_args_num+fake_args_num-1, real_args_num-1, -1):
+            kwargs[spec.args[index]] = args.pop(index)
+        return combine_args_kwargs(args, kwargs)
+
+    def __call__(self, fn, *args, **kwargs):
+        """Catch defined exceptions and output specified message."""
+        def new_func(*args, **kwargs):
+            # TODO: allow specifying __self__ attributes to be used
+            # in message.
+            def parse_params(e, params=False):
+                args_kwargs = self._map_args_kwargs(fn, *args, **kwargs)
+                if not params:
+                    params = []
+                values = []
+                # key for args is index, for kwargs, it is dictionary
+                # key.
+                for key, _type in params:
+                    # Access value from args or kwargs and add it to
+                    # list.
+                    values.append(args_kwargs[_type][key])
+                # Combine with error message if error_msg_pos is not
+                # False.
+                if self.err_msg_pos is not False:
+                    values.insert(self.err_msg_pos, e)
+                return tuple(values)
+
+            exceptions = self._get_exceptions()
+            try:
+                return fn(*args, **kwargs)
+            except exceptions as e:
+                for exc_dct in self.exceptions_lst:
+                    exception = exc_dct['exception']
+                    # Check if specific condition matches what is defined
+                    # in exception catching config.
+                    if isinstance(e, exception):
+                        exc_condition = exc_dct.get('exc_condition')
+                        # Check if exception has condition (such as specific
+                        # error code) and run it.
+                        if not exc_condition or exc_condition(e):
+                            exc_to_raise = (
+                                exc_dct.get('raise_exception') or exception)
+                            values = parse_params(e, exc_dct.get('params'))
+                            raise exc_to_raise(exc_dct['msg'] % values)
+                raise
+        return new_func
+
+
 time_it = _TimeIt
+catch_exceptions = _CatchExceptions

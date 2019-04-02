@@ -2,13 +2,13 @@ from distutils.core import setup
 
 setup(
     name='footil',
-    version='0.5.0',
-    packages=['footil'],
+    version='0.6.0',
+    packages=['footil', 'footil.lib'],
     license='LGPLv3',
     url='https://github.com/focusate/footil',
     description="Various Python helpers for other projects",
     long_description=open('README.rst').read(),
-    install_requires=['yattag'],
+    install_requires=['yattag', 'python-dateutil'],
     maintainer='Andrius Laukavičius',
     maintainer_email='dev@focusate.eu',
     python_requires='>=3.5',

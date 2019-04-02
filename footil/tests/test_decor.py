@@ -1,7 +1,49 @@
-import unittest
+from footil import decor, log
+from . import common
 
-from footil import decor
-from footil import log
+
+def _func1(a, b, c):
+    pass
+
+
+def _func2(a=5, b=10):
+    pass
+
+
+def _func3(a, b, c=5, d=10):
+    pass
+
+
+def _func4(a, b, *args):
+    pass
+
+
+def _func5(a, b, *args, c=5):
+    pass
+
+
+def _func6(a, b, c=5, **kwargs):
+    pass
+
+
+def _func7(a, b, *args, c=5, **kwargs):
+    pass
+
+
+def _func8(*args):
+    pass
+
+
+def _func9(**kwargs):
+    pass
+
+
+def _func10(*args, **kwargs):
+    pass
+
+
+def _func_exception():
+    raise TypeError("Some Type Error")
 
 
 def _dummy(): pass
@@ -23,7 +65,7 @@ class _Dummy:
     def _dummy2(self, a, b, c='ctest'): pass
 
 
-class TestDecor(unittest.TestCase):
+class TestDecor(common.TestFootilCommon):
     """Test class for decorators."""
 
     def test_time_it_msg_1(self):
@@ -87,3 +129,142 @@ class TestDecor(unittest.TestCase):
             _dummy2)
         res = log.capture_output(d, args=(0, 1), kwargs={'c': 2})
         self.assertEqual(res, "'_dummy2' took 0.00 hour(s) 1 2\n")
+
+    def _func11(self, a, b=5):
+        pass
+
+    def test_args_kwargs_map_func1(self):
+        """Map func1 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(_func1, 1, 2, 3)
+        self.assertEqual(res, {'args': (1, 2, 3), 'kwargs': {}})
+
+    def test_args_kwargs_map_func2(self):
+        """Map func2 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(_func2, a=5, b=10)
+        self.assertEqual(res, {'args': (), 'kwargs': {'a': 5, 'b': 10}})
+        res = decor.catch_exceptions._map_args_kwargs(_func2, a=6, b=7)
+        self.assertEqual(res, {'args': (), 'kwargs': {'a': 6, 'b': 7}})
+        res = decor.catch_exceptions._map_args_kwargs(_func2, 6, b=7)
+        self.assertEqual(res, {'args': (), 'kwargs': {'a': 6, 'b': 7}})
+        res = decor.catch_exceptions._map_args_kwargs(_func2, 6, 7)
+        self.assertEqual(res, {'args': (), 'kwargs': {'a': 6, 'b': 7}})
+        res = decor.catch_exceptions._map_args_kwargs(_func2, b=9, a=10)
+        self.assertEqual(res, {'args': (), 'kwargs': {'a': 10, 'b': 9}})
+        res = decor.catch_exceptions._map_args_kwargs(_func2, a=5, b=9)
+        self.assertEqual(res, {'args': (), 'kwargs': {'a': 5, 'b': 9}})
+
+    def test_args_kwargs_map_func3(self):
+        """Map func3 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(_func3, 1, 2, c=5, d=10)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 5, 'd': 10}})
+        res = decor.catch_exceptions._map_args_kwargs(_func3, 1, 2, c=6, d=10)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 6, 'd': 10}})
+        res = decor.catch_exceptions._map_args_kwargs(_func3, 1, 2, c=6, d=9)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 6, 'd': 9}})
+        res = decor.catch_exceptions._map_args_kwargs(_func3, 1, 2, 3, d=9)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 3, 'd': 9}})
+        res = decor.catch_exceptions._map_args_kwargs(_func3, 1, 2, 3, 4)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 3, 'd': 4}})
+
+    def test_args_kwargs_map_func4(self):
+        """Map func4 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(_func4, 1, 2)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {}})
+        res = decor.catch_exceptions._map_args_kwargs(_func4, 1, 2, 3)
+        self.assertEqual(res, {'args': (1, 2, 3), 'kwargs': {}})
+        res = decor.catch_exceptions._map_args_kwargs(_func4, 1, 2, 3, 4)
+        self.assertEqual(res, {'args': (1, 2, 3, 4), 'kwargs': {}})
+
+    def test_args_kwargs_map_func5(self):
+        """Map func5 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(_func5, 1, 2, c=5)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(_func5, 1, 2, 3, c=5)
+        self.assertEqual(res, {'args': (1, 2, 3), 'kwargs': {'c': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(_func5, 1, 2, 3, 4, c=5)
+        self.assertEqual(res, {'args': (1, 2, 3, 4), 'kwargs': {'c': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(_func5, 1, 2, 3, c=6)
+        self.assertEqual(res, {'args': (1, 2, 3), 'kwargs': {'c': 6}})
+
+    def test_args_kwargs_map_func6(self):
+        """Map func6 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(_func6, 1, 2, c=5)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(_func6, 1, 2, 3)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 3}})
+        res = decor.catch_exceptions._map_args_kwargs(_func6, 1, 2, 3, d=5)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 3, 'd': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(_func6, 1, 2, c=5, d=10)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 5, 'd': 10}})
+
+    def test_args_kwargs_map_func7(self):
+        """Map func7 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(_func7, 1, 2, c=5)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(_func7, 1, 2, 3, c=5)
+        self.assertEqual(res, {'args': (1, 2, 3), 'kwargs': {'c': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(
+            _func7, 1, 2, 3, c=5, d=6)
+        self.assertEqual(
+            res, {'args': (1, 2, 3), 'kwargs': {'c': 5, 'd': 6}})
+
+    def test_args_kwargs_map_func8(self):
+        """Map func8 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(_func8, 1, 2)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {}})
+        res = decor.catch_exceptions._map_args_kwargs(_func8, 1)
+        self.assertEqual(res, {'args': (1,), 'kwargs': {}})
+        res = decor.catch_exceptions._map_args_kwargs(_func8)
+        self.assertEqual(res, {'args': (), 'kwargs': {}})
+
+    def test_args_kwargs_map_func9(self):
+        """Map func9 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(_func9, a=5, b=10)
+        self.assertEqual(res, {'args': (), 'kwargs': {'a': 5, 'b': 10}})
+        res = decor.catch_exceptions._map_args_kwargs(_func9, a=5)
+        self.assertEqual(res, {'args': (), 'kwargs': {'a': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(_func9)
+        self.assertEqual(res, {'args': (), 'kwargs': {}})
+
+    def test_args_kwargs_map_func10(self):
+        """Map func10 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(_func10)
+        self.assertEqual(res, {'args': (), 'kwargs': {}})
+        res = decor.catch_exceptions._map_args_kwargs(_func10, 1)
+        self.assertEqual(res, {'args': (1,), 'kwargs': {}})
+        res = decor.catch_exceptions._map_args_kwargs(_func10, a=5)
+        self.assertEqual(res, {'args': (), 'kwargs': {'a': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(_func10, 1, a=5)
+        self.assertEqual(res, {'args': (1,), 'kwargs': {'a': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(_func10, 1, 2, a=5, b=10)
+        self.assertEqual(res, {'args': (1, 2), 'kwargs': {'a': 5, 'b': 10}})
+
+    def test_args_kwargs_map_func11(self):
+        """Map func11 args/kwargs."""
+        res = decor.catch_exceptions._map_args_kwargs(self._func11, 1, b=5)
+        self.assertEqual(res, {'args': (self, 1,), 'kwargs': {'b': 5}})
+        res = decor.catch_exceptions._map_args_kwargs(self._func11, 1, 2)
+        self.assertEqual(res, {'args': (self, 1,), 'kwargs': {'b': 2}})
+
+    def test_catch_exception_1(self):
+        """Catch TypeError and raise ValueError."""
+        wrapped_f = decor.catch_exceptions([
+            {
+                'exception': TypeError,
+                'raise_exception': ValueError,
+                'msg': "%s",
+            },
+        ])(_func_exception)
+        with self.assertRaises(ValueError):
+            wrapped_f()
+
+    def test_catch_exception_2(self):
+        """Catch TypeError and raise same error."""
+        wrapped_f = decor.catch_exceptions([
+            {
+                'exception': TypeError,
+                'msg': "%s",
+            },
+        ])(_func_exception)
+        with self.assertRaises(TypeError):
+            wrapped_f()
