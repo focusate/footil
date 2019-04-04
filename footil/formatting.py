@@ -1,4 +1,4 @@
-"""Manipulate data to have different formats."""
+"""Manipulate data to have different format or output different data."""
 import traceback
 import sys
 import yattag
@@ -8,6 +8,7 @@ import ast
 from string import Formatter
 from operator import attrgetter
 import re
+from email.utils import parseaddr, formataddr
 
 from footil.lib import pattern_methods
 
@@ -244,3 +245,11 @@ def generate_names(
     return [
         (rec.id, generate_name(pattern, rec, strip_falsy=strip_falsy))
         for rec in objects]
+
+
+# Email formatting utilities.
+
+def replace_email_name(name: str, oldemail: str) -> str:
+    """Replace email name with new one."""
+    _, email_part = parseaddr(oldemail)
+    return formataddr((name, email_part))

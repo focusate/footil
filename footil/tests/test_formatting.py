@@ -231,3 +231,33 @@ class TestFormatting(TestFootilCommon):
         objects_lst = [dummy_1_3, dummy_2_3]
         res = formatting.generate_names('{a.b.c} | {b}', objects_lst)
         self.assertEqual(res, [(1, '10 | something'), (2, '50 | something2')])
+
+    def test_replace_email_name_1(self):
+        """Replace name for email 'A <a@b.com>'."""
+        email = formatting.replace_email_name('B', 'A <a@b.com>')
+        self.assertEqual(email, 'B <a@b.com>')
+
+    def test_replace_email_name_2(self):
+        """Replace name for email '<a@b.com>'."""
+        email = formatting.replace_email_name('B', '<a@b.com>')
+        self.assertEqual(email, 'B <a@b.com>')
+
+    def test_replace_email_name_3(self):
+        """Replace name for email 'a@b.com'."""
+        email = formatting.replace_email_name('B', 'a@b.com')
+        self.assertEqual(email, 'B <a@b.com>')
+
+    def test_replace_email_name_4(self):
+        """Replace name for email 'A a@b.com'."""
+        email = formatting.replace_email_name('B', 'A a@b.com')
+        self.assertEqual(email, 'B <A a@b.com>')
+
+    def test_replace_email_name_5(self):
+        """Replace name for email ''."""
+        email = formatting.replace_email_name('B', '')
+        self.assertEqual(email, 'B <>')
+
+    def test_replace_email_name_6(self):
+        """Replace name for email '' when name is ''."""
+        email = formatting.replace_email_name('', '')
+        self.assertEqual(email, '')
