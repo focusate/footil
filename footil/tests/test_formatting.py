@@ -220,8 +220,8 @@ class TestFormatting(TestFootilCommon):
             dummy3, 'parent', 'name', '.',)
         self.assertEqual(res, '1.False.d3')
 
-    def test_generate_names(self):
-        """Generate names using iterator object."""
+    def test_generate_names_1(self):
+        """Generate names using iterator object. Default key."""
         dummy_1 = Dummy(c=10)
         dummy_1_2 = Dummy(b=dummy_1)
         dummy_1_3 = Dummy(a=dummy_1_2, b='something', id=1)
@@ -229,8 +229,37 @@ class TestFormatting(TestFootilCommon):
         dummy_2_2 = Dummy(b=dummy_2)
         dummy_2_3 = Dummy(a=dummy_2_2, b='something2', id=2)
         objects_lst = [dummy_1_3, dummy_2_3]
-        res = formatting.generate_names('{a.b.c} | {b}', objects_lst)
+        res = formatting.generate_names(
+            {'pattern': '{a.b.c} | {b}', 'objects': objects_lst})
         self.assertEqual(res, [(1, '10 | something'), (2, '50 | something2')])
+        # Generate names with empty list as objects value.
+        res = formatting.generate_names(
+            {'pattern': '{a.b.c} | {b}', 'objects': []})
+        self.assertEqual(res, [])
+        # Generate names with empty pattern.
+        res = formatting.generate_names(
+            {'pattern': '', 'objects': objects_lst})
+        self.assertEqual(res, [(1, ''), (2, '')])
+
+    def test_generate_names_2(self):
+        """Generate names using iterator object. Specified key."""
+        dummy_1 = Dummy(c=10)
+        dummy_1_2 = Dummy(b=dummy_1)
+        dummy_1_3 = Dummy(a=dummy_1_2, b='something', key=1)
+        dummy_2 = Dummy(c=50)
+        dummy_2_2 = Dummy(b=dummy_2)
+        dummy_2_3 = Dummy(a=dummy_2_2, b='something2', key=2)
+        objects_lst = [dummy_1_3, dummy_2_3]
+        res = formatting.generate_names(
+            {'pattern': '{a.b.c} | {b}', 'objects': objects_lst, 'key': 'key'})
+        self.assertEqual(res, [(1, '10 | something'), (2, '50 | something2')])
+
+    def test_generate_names_3(self):
+        """Try to call generate_names without required keys."""
+        self.assertRaises(
+            ValueError, formatting.generate_names, {'pattern': ''})
+        self.assertRaises(
+            ValueError, formatting.generate_names, {'objects': []})
 
     def test_replace_email_name_1(self):
         """Replace name for email 'A <a@b.com>'."""

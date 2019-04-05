@@ -239,12 +239,42 @@ def generate_name(pattern: str, obj: object, strip_falsy: bool = True) -> str:
     return name
 
 
-def generate_names(
-        pattern: str, objects: object, strip_falsy: bool = True) -> list:
-    """Wrap generate_name and reuse for multiple objects."""
+def generate_names(cfg: dict) -> list:
+    """Wrap generate_name and reuse for multiple objects.
+
+    cfg keys:
+        pattern (str): pattern to generate name by. e.g.
+            'test {a.b} / {c}'
+        objects (iterable): iterable of objects to use.
+        strip_falsy (bool): whether to strip away falsy attribute
+            values or not. If stripped away, then leading string is
+            also stripped away for next attribute to not look like
+            '/ attr_value'. It instead just looks like 'attr_value'
+            (default: {True})
+        key (str): attribute name to put its value into tuple
+            (default: {'id'})
+
+    Returns:
+        list of tuple pairs, where first item is identifier, second
+        generated name string.
+
+    """
+    try:
+        pattern = cfg['pattern']
+        objects = cfg['objects']
+    except KeyError as e:
+        raise ValueError("cfg is missing required key '%s'" % e)
+    # strip falsy values is True on default.
+    strip_falsy = cfg.get('strip_falsy', True)
+    # Default key is 'id' attribute.
+    key = cfg.get('key', 'id')
     return [
-        (rec.id, generate_name(pattern, rec, strip_falsy=strip_falsy))
-        for rec in objects]
+        (
+            getattr(obj, key),
+            generate_name(pattern, obj, strip_falsy=strip_falsy)
+        )
+        for obj in objects
+    ]
 
 
 # Email formatting utilities.
