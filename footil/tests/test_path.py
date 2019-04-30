@@ -3,13 +3,13 @@ from footil import path
 import os
 
 
-class TestXos(common.TestFootilCommon):
+class TestPath(common.TestFootilCommon):
     """Test cases for module xos."""
 
     @classmethod
     def setUpClass(cls):
-        """Set up data for xos module tests."""
-        super(TestXos, cls).setUpClass()
+        """Set up data for path module tests."""
+        super(TestPath, cls).setUpClass()
         cls.cfd = path.get_cfp(fdir=True)
 
     def test_get_cfp(self):

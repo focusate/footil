@@ -5,6 +5,9 @@ from . import (
     test_xtyping,
     test_path,
     test_date,
+    test_formatting,
+    test_parsing,
+    test_file,
 )
 __all__ = [
     'common',
@@ -12,5 +15,8 @@ __all__ = [
     'test_log',
     'test_xtyping',
     'test_path',
-    'test_date'
+    'test_date',
+    'test_formatting',
+    'test_parsing',
+    'test_file',
 ]
