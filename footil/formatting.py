@@ -283,3 +283,31 @@ def replace_email_name(name: str, oldemail: str) -> str:
     """Replace email name with new one."""
     _, email_part = parseaddr(oldemail)
     return formataddr((name, email_part))
+
+
+# String formatting
+
+def replace_ic(
+    term: str,
+    to_replace: str,
+        replace_with: Optional[str] = '') -> str:
+    """Replace fragment in term with other fragment (ignore case).
+
+    This is case-insensitive replacement, e.g. words 'Hello' and
+    'heLLo' will be replaced if key to replace is 'HELLO', 'HeLlo'
+    and etc.
+
+    Args:
+        term (str): term where fragment to replace will be searched
+            for and replaced with new fragment.
+        to_replace (str): fragment to be replaced (old fragment).
+        replace_with (str): fragment to be replaced with
+            (new fragment) (default: {''}).
+    Returns:
+        new term where old fragment (to_replace) in term is replaced
+        with new fragment (to_replace).
+        str
+
+    """
+    insensitive_fragment = re.compile(to_replace, re.IGNORECASE)
+    return insensitive_fragment.sub(replace_with, term)

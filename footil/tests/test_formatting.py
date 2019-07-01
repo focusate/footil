@@ -290,3 +290,21 @@ class TestFormatting(TestFootilCommon):
         """Replace name for email '' when name is ''."""
         email = formatting.replace_email_name('', '')
         self.assertEqual(email, '')
+
+    def test_replace_ic_1(self):
+        """Replace 'HelLo' with default replace_with ('')."""
+        new_term = formatting.replace_ic('Hello and heLLo And hello', 'HelLo')
+        self.assertEqual(new_term, ' and  And ')
+
+    def test_replace_ic_2(self):
+        """Replace 'HelLo' with 'byE' (existing fragment)."""
+        new_term = formatting.replace_ic(
+            'Hello and heLLo And hello', 'HelLo', 'byE')
+        self.assertEqual(new_term, 'byE and byE And byE')
+
+    def test_replace_ic_3(self):
+        """Replace 'byE' with 'HelLo' (non existing fragment)."""
+        new_term = formatting.replace_ic(
+            'Hello and heLLo And hello', 'byE', 'HelLo')
+        # Term should left unchanged.
+        self.assertEqual(new_term, 'Hello and heLLo And hello')
