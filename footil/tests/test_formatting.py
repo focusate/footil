@@ -8,12 +8,12 @@ from .common import TestFootilCommon, Dummy
 class TestFormatting(TestFootilCommon):
     """Test cases for formatting module."""
 
-    def test_formatted_exception_1(self):
+    def test_01_formatted_exception_1(self):
         """Use default formatting for exception list (no formatter)."""
         res = formatting._get_formatted_exception(self.dummy_lst)
         self.assertEqual(res, 'traceback:\nsomething_went_wrong\nsome_error\n')
 
-    def test_formatted_exception_2(self):
+    def test_02_formatted_exception_2(self):
         """Use html formatter for exception list.
 
         Case: full message is showed.
@@ -37,7 +37,7 @@ class TestFormatting(TestFootilCommon):
             '</div>')
         self.assertEqual(res, dest)
 
-    def test_formatted_exception_3(self):
+    def test_03_formatted_exception_3(self):
         """Use html formatter for exception list.
 
         Case: part of message is showed. Default bootstrap collapse is
@@ -86,7 +86,7 @@ class TestFormatting(TestFootilCommon):
         # Slice to remove '#'.
         self.assertEqual(div_id, a_data_target[1:])
 
-    def test_formatted_exception_4(self):
+    def test_04_formatted_exception_4(self):
         """Use html formatter for exception list.
 
         Case: part of message is showed. Custom attribute is
@@ -117,21 +117,21 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(div_childs[0].text, 'something_went_wrong')
         self.assertEqual(div_childs[1].text, 'some_error')
 
-    def test_generate_name_0(self):
+    def test_05_generate_name_0(self):
         """Get name without using any attributes."""
         # Modify dummy object by adding two attributes.
         dummy = Dummy(a=10, b='test')
         res = formatting.generate_name('a / b', dummy)
         self.assertEqual(res, 'a / b')
 
-    def test_generate_name_1(self):
+    def test_06_generate_name_1(self):
         """Get name using two attributes."""
         # Modify dummy object by adding two attributes.
         dummy = Dummy(a=10, b='test')
         res = formatting.generate_name('{a} / {b}', dummy)
         self.assertEqual(res, '10 / test')
 
-    def test_generate_name_2(self):
+    def test_07_generate_name_2(self):
         """Specify non existing attribute on pattern to raise error."""
         dummy = Dummy(c=5)
         self.assertRaises(
@@ -140,7 +140,7 @@ class TestFormatting(TestFootilCommon):
             '{b} / {c}',
             dummy)
 
-    def test_generate_name_3(self):
+    def test_08_generate_name_3(self):
         """Strip falsy attributes."""
         dummy = Dummy(a=False, b='test')
         dummy.a = False
@@ -148,14 +148,14 @@ class TestFormatting(TestFootilCommon):
             '{a} / {b}', dummy, strip_falsy=True)
         self.assertEqual('test', res)
 
-    def test_generate_name_4(self):
+    def test_09_generate_name_4(self):
         """Do Not strip falsy attributes."""
         dummy = Dummy(a=False, b='test')
         res = formatting.generate_name(
             '{a} / {b}', dummy, strip_falsy=False)
         self.assertEqual('False / test', res)
 
-    def test_generate_name_5(self):
+    def test_10_generate_name_5(self):
         """Get name with attributes of attribute (n-depth access)."""
         dummy = Dummy(c=10)
         dummy2 = Dummy(b=dummy)
@@ -173,7 +173,7 @@ class TestFormatting(TestFootilCommon):
             '{a.b.c} | {b}', dummy3, strip_falsy=False)
         self.assertEqual('0 | something', res)
 
-    def test_generate_name_6(self):
+    def test_11_generate_name_6(self):
         """Get name with recursive attributes pattern access."""
         dummy = Dummy(parent=False, name='d1', z='test0')
         dummy2 = Dummy(parent=dummy, name='d2')
@@ -194,7 +194,7 @@ class TestFormatting(TestFootilCommon):
             strip_falsy=False)
         self.assertEqual(res, "d1 - test0")
 
-    def test_join_parent_attrs(self):
+    def test_12_join_parent_attrs(self):
         """Join all truthy parents attributes."""
         dummy = Dummy(parent=False, name='d1')
         dummy2 = Dummy(parent=dummy, name='d2')
@@ -220,7 +220,7 @@ class TestFormatting(TestFootilCommon):
             dummy3, 'parent', 'name', '.',)
         self.assertEqual(res, '1.False.d3')
 
-    def test_generate_names_1(self):
+    def test_13_generate_names_1(self):
         """Generate names using iterator object. Default key."""
         dummy_1 = Dummy(c=10)
         dummy_1_2 = Dummy(b=dummy_1)
@@ -241,7 +241,7 @@ class TestFormatting(TestFootilCommon):
             {'pattern': '', 'objects': objects_lst})
         self.assertEqual(res, [(1, ''), (2, '')])
 
-    def test_generate_names_2(self):
+    def test_14_generate_names_2(self):
         """Generate names using iterator object. Specified key."""
         dummy_1 = Dummy(c=10)
         dummy_1_2 = Dummy(b=dummy_1)
@@ -254,55 +254,80 @@ class TestFormatting(TestFootilCommon):
             {'pattern': '{a.b.c} | {b}', 'objects': objects_lst, 'key': 'key'})
         self.assertEqual(res, [(1, '10 | something'), (2, '50 | something2')])
 
-    def test_generate_names_3(self):
+    def test_15_generate_names_3(self):
         """Try to call generate_names without required keys."""
         self.assertRaises(
             ValueError, formatting.generate_names, {'pattern': ''})
         self.assertRaises(
             ValueError, formatting.generate_names, {'objects': []})
 
-    def test_replace_email_name_1(self):
+    def test_16_replace_email_name_1(self):
         """Replace name for email 'A <a@b.com>'."""
         email = formatting.replace_email_name('B', 'A <a@b.com>')
         self.assertEqual(email, 'B <a@b.com>')
 
-    def test_replace_email_name_2(self):
+    def test_17_replace_email_name_2(self):
         """Replace name for email '<a@b.com>'."""
         email = formatting.replace_email_name('B', '<a@b.com>')
         self.assertEqual(email, 'B <a@b.com>')
 
-    def test_replace_email_name_3(self):
+    def test_18_replace_email_name_3(self):
         """Replace name for email 'a@b.com'."""
         email = formatting.replace_email_name('B', 'a@b.com')
         self.assertEqual(email, 'B <a@b.com>')
 
-    def test_replace_email_name_4(self):
+    def test_19_replace_email_name_4(self):
         """Replace name for email 'A a@b.com'."""
         email = formatting.replace_email_name('B', 'A a@b.com')
         self.assertEqual(email, 'B <A a@b.com>')
 
-    def test_replace_email_name_5(self):
+    def test_20_replace_email_name_5(self):
         """Replace name for email ''."""
         email = formatting.replace_email_name('B', '')
         self.assertEqual(email, 'B <>')
 
-    def test_replace_email_name_6(self):
+    def test_21_replace_email_name_6(self):
         """Replace name for email '' when name is ''."""
         email = formatting.replace_email_name('', '')
         self.assertEqual(email, '')
 
-    def test_replace_ic_1(self):
+    def test_22_replace_email_1(self):
+        """Replace email for email 'A <a@b.com>'."""
+        email = formatting.replace_email('c@d.com', 'A <a@b.com>')
+        self.assertEqual(email, 'A <c@d.com>')
+
+    def test_23_replace_email_2(self):
+        """Replace email for email '<a@b.com>'."""
+        email = formatting.replace_email('<c@d.com>', '<a@b.com>')
+        self.assertEqual(email, '<c@d.com>')
+
+    def test_24_replace_email_3(self):
+        """Replace email for email 'a@b.com'."""
+        email = formatting.replace_email('c@d.com', 'a@b.com')
+        self.assertEqual(email, 'c@d.com')
+
+    def test_25_replace_email_4(self):
+        """Replace email for email ''."""
+        email = formatting.replace_email('c@d.com', '')
+        self.assertEqual(email, 'c@d.com')
+
+    def test_26_replace_email_5(self):
+        """Replace email for email '' when name is ''."""
+        email = formatting.replace_email('', '')
+        self.assertEqual(email, '')
+
+    def test_27_replace_ic_1(self):
         """Replace 'HelLo' with default replace_with ('')."""
         new_term = formatting.replace_ic('Hello and heLLo And hello', 'HelLo')
         self.assertEqual(new_term, ' and  And ')
 
-    def test_replace_ic_2(self):
+    def test_28_replace_ic_2(self):
         """Replace 'HelLo' with 'byE' (existing fragment)."""
         new_term = formatting.replace_ic(
             'Hello and heLLo And hello', 'HelLo', 'byE')
         self.assertEqual(new_term, 'byE and byE And byE')
 
-    def test_replace_ic_3(self):
+    def test_29_replace_ic_3(self):
         """Replace 'byE' with 'HelLo' (non existing fragment)."""
         new_term = formatting.replace_ic(
             'Hello and heLLo And hello', 'byE', 'HelLo')

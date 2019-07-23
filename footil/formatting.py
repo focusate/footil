@@ -279,9 +279,22 @@ def generate_names(cfg: dict) -> list:
 
 # Email formatting utilities.
 
-def replace_email_name(name: str, oldemail: str) -> str:
+def replace_email_name(name: str, old_email: str) -> str:
     """Replace email name with new one."""
-    _, email_part = parseaddr(oldemail)
+    _, email_part = parseaddr(old_email)
+    return formataddr((name, email_part))
+
+
+def replace_email(email_part: str, old_email: str) -> str:
+    """Replace email part with new one.
+
+    Email name is kept the same if one was present.
+
+    Args:
+        email_part: new email to replace with.
+        old_email: email to replace to.
+    """
+    name, _ = parseaddr(old_email)
     return formataddr((name, email_part))
 
 
@@ -303,6 +316,7 @@ def replace_ic(
         to_replace (str): fragment to be replaced (old fragment).
         replace_with (str): fragment to be replaced with
             (new fragment) (default: {''}).
+
     Returns:
         new term where old fragment (to_replace) in term is replaced
         with new fragment (to_replace).
