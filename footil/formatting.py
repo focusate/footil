@@ -325,3 +325,19 @@ def replace_ic(
     """
     insensitive_fragment = re.compile(to_replace, re.IGNORECASE)
     return insensitive_fragment.sub(replace_with, term)
+
+
+def strip_space(s: str):
+    r"""Replace all spaces from string.
+
+    Removes space like ' ', '\t', '\n' or '\r'. It will remove between
+    chars too.
+
+    Args:
+        s: string to remove white space for.
+
+    Returns:
+        New string with all spaces removed.
+
+    """
+    return ''.join(s.split())

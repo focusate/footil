@@ -333,3 +333,18 @@ class TestFormatting(TestFootilCommon):
             'Hello and heLLo And hello', 'byE', 'HelLo')
         # Term should left unchanged.
         self.assertEqual(new_term, 'Hello and heLLo And hello')
+
+    def test_30_strip_space(self):
+        """Strip string without spaces."""
+        s = formatting.strip_space('abc')
+        self.assertEqual(s, 'abc')
+
+    def test_31_strip_space(self):
+        """Strip string with white space only."""
+        s = formatting.strip_space('\tabc ')
+        self.assertEqual(s, 'abc')
+
+    def test_32_strip_space(self):
+        """Strip string with white space and space around chars."""
+        s = formatting.strip_space('\tab c \nd\r')
+        self.assertEqual(s, 'abcd')
