@@ -3,7 +3,7 @@ import io
 import contextlib
 from typing import Optional
 import logging
-
+import verboselogs
 
 LOG_FORMAT = '%(asctime)s %(levelname)s %(filename)s: %(message)s'
 
@@ -40,3 +40,31 @@ def setup_logger(
     logging.basicConfig(
         format=LOG_FORMAT,
         level=log_level)
+
+
+def get_verbose_logger(
+    name: str,
+    log_level: str,
+        fmt: str = LOG_FORMAT) -> verboselogs.VerboseLogger:
+    """Return VerboseLogger that has extra log_levels.
+
+    Possible log levels:
+        - CRITICAL 50
+        - ERROR 40
+        - SUCCESS 35
+        - WARNING 30
+        - NOTICE 25
+        - INFO 20
+        - VERBOSE 15
+        - DEBUG 10
+        - SPAM 5
+        - NOTSET 0
+    """
+    logger = verboselogs.VerboseLogger(name)
+    stream_handler = logging.StreamHandler()
+    if fmt:
+        formatter = logging.Formatter(fmt)
+        stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+    logger.setLevel(log_level)
+    return logger
