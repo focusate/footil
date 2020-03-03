@@ -9,12 +9,12 @@ LOG_FORMAT = '%(asctime)s %(levelname)s %(filename)s: %(message)s'
 
 
 def capture_output(
-    target: object,
+    target: callable,
     args: Optional[tuple] = None,
         kwargs: Optional[dict] = None) -> str:
     """Redirect stdout and stderr into string buffer and capture it.
 
-    target object is executed with optional args, kwargs and all stdout/
+    target func is executed with optional args, kwargs and all stdout/
     stderr that is captured, returned in string form.
 
     Args:

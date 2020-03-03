@@ -2,7 +2,141 @@
 import time
 import logging
 import inspect
-from typing import Optional
+from typing import Optional, Union, Dict
+
+from . import formatting
+
+
+def _get_stdout_writer(
+        stdout_writer=None, stdout_getter=None, args=None, kwargs=None):
+    if stdout_writer:
+        return stdout_writer
+    if stdout_getter:
+        args = args or ()
+        kwargs = kwargs or {}
+        return stdout_getter(*args, **kwargs)
+    return print
+
+
+def _default_interpolation(pattern, args):
+    return (pattern % args, )
+
+
+def _lazy_interpolation(pattern, args):
+    return (pattern, args)
+
+
+def _get_interpolation_func(lazy=False):
+    if lazy:
+        return _lazy_interpolation
+    return _default_interpolation
+
+
+def _get_stdout_input_args(func, options, args=None, kwargs=None):
+    if not args:
+        args = ()
+    if not kwargs:
+        kwargs = {}
+    interpolation = _get_interpolation_func(
+        options.get('lazy_interpolation', False))
+    pattern, pattern_args = formatting.format_func_input(
+        func.__name__,
+        command=options.get('command', False),
+        no_first_arg=options.get('no_first_arg', False),
+        prefix=options.get('prefix', ''),
+        args=args,
+        kwargs=kwargs)
+    return interpolation(pattern, pattern_args)
+
+
+def _get_stdout_output_args(options, output):
+    interpolation = _get_interpolation_func(
+        options.get('lazy_interpolation', False))
+    return interpolation('%s%s', (options.get('prefix', ''), output))
+
+
+def stdout_input(
+        options: Union[
+            None,
+            Dict,
+        ] = None):
+    """Log function's call input.
+
+    Args:
+        options: options to customize input's stdout formatting:
+            stdout_writer: function that writes to stdout. If
+                stdout_writer stdout_getter are not specified, will
+                default to `print` function.
+            stdout_getter: function to get stdout function that would be
+                used in writing stdout. Will use original function's
+                *args, **kwargs in call.
+            lazy_interpolation: whether to let stdout_writer to handle
+                string interpolation.
+            no_first_arg: whether to not include first argument in
+                formatted string.
+            prefix: whether to set custom prefix before formatted
+                string.
+            command: whether call it as shell like. If set to True, will
+                format input without wrapping args/kwargs with
+                parenthesis.
+    """
+    def inner(func):
+        def wrapper(*args, **kwargs):
+            stdout_writer = _get_stdout_writer(
+                stdout_writer=options.get('stdout_writer'),
+                stdout_getter=options.get('stdout_getter'),
+                args=args,
+                kwargs=kwargs
+            )
+            stdout_args = _get_stdout_input_args(
+                func, options, args=args, kwargs=kwargs)
+            stdout_writer(*stdout_args)
+            return func(*args, **kwargs)
+        return wrapper
+
+    if not options:
+        options = {}
+    return inner
+
+
+def stdout_output(
+        options: Union[
+            None,
+            Dict,
+        ] = None):
+    """Log function's call output.
+
+    Args:
+        options: options to customize output's stdout formatting:
+            stdout_writer: function that writes to stdout. If
+                stdout_writer stdout_getter are not specified, will
+                default to `print` function.
+            stdout_getter: function to get stdout function that would be
+                used in writing stdout. Will use original function's
+                *args, **kwargs in call.
+            lazy_interpolation: whether to let stdout_writer to handle
+                string interpolation.
+            prefix: whether to set custom prefix before formatted
+                string.
+    """
+    def inner(func):
+        def wrapper(*args, **kwargs):
+            stdout_writer = _get_stdout_writer(
+                stdout_writer=options.get('stdout_writer'),
+                stdout_getter=options.get('stdout_getter'),
+                args=args,
+                kwargs=kwargs
+            )
+            output = func(*args, **kwargs)
+            stdout_args = _get_stdout_output_args(
+                options, output)
+            stdout_writer(*stdout_args)
+            return output
+        return wrapper
+
+    if not options:
+        options = {}
+    return inner
 
 
 class _TimeIt(object):

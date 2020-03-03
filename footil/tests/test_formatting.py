@@ -348,3 +348,145 @@ class TestFormatting(TestFootilCommon):
         """Strip string with white space and space around chars."""
         s = formatting.strip_space('\tab c \nd\r')
         self.assertEqual(s, 'abcd')
+
+    def test_33_format_func_input(self):
+        """Format input as normal function.
+
+        Case: args, kwargs passed.
+        """
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            args=('a', 'b'),
+            kwargs={'x': 10})
+        self.assertEqual(
+            pattern % pattern_args, "my_func('a', 'b', x=10)")
+
+    def test_34_format_func_input(self):
+        """Format input as normal function.
+
+        Case: args, kwargs passed. First arg ignored.
+        """
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            no_first_arg=True,
+            args=('a', 'b'),
+            kwargs={'x2': '20'}
+        )
+        self.assertEqual(
+            pattern % pattern_args, "my_func('b', x2='20')")
+
+    def test_35_format_func_input(self):
+        """Format input as normal function.
+
+        Case: args only
+        """
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            args=('a', 'b'),
+        )
+        self.assertEqual(
+            pattern % pattern_args, "my_func('a', 'b')")
+
+    def test_36_format_func_input(self):
+        """Format input as normal function.
+
+        Case: kwargs only
+        """
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            kwargs={'x': 10}
+        )
+        self.assertEqual(
+            pattern % pattern_args, "my_func(x=10)")
+
+    def test_37_format_func_input(self):
+        """Format input as normal function.
+
+        Case 1: no args, kwargs
+        Case 2: no args, kwargs and no first arg.
+        """
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+        )
+        self.assertEqual(
+            pattern % pattern_args, "my_func()")
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            no_first_arg=True,
+        )
+        self.assertEqual(
+            pattern % pattern_args, "my_func()")
+
+    def test_38_format_func_input(self):
+        """Format input as shell command.
+
+        Case: args, kwargs passed.
+        """
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            command=True,
+            args=('a', 'b'),
+            kwargs={'x': 10})
+        self.assertEqual(
+            pattern % pattern_args, "my_func a b x=10")
+
+    def test_39_format_func_input(self):
+        """Format input as shell command.
+
+        Case: args, kwargs passed. First arg ignored.
+        """
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            command=True,
+            no_first_arg=True,
+            args=('a', 'b'),
+            kwargs={'x2': '20'}
+        )
+        self.assertEqual(
+            pattern % pattern_args, "my_func b x2=20")
+
+    def test_40_format_func_input(self):
+        """Format input as shell command.
+
+        Case: args only
+        """
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            command=True,
+            args=('a', 'b'),
+        )
+        self.assertEqual(
+            pattern % pattern_args, "my_func a b")
+
+    def test_41_format_func_input(self):
+        """Format input as shell command.
+
+        Case: kwargs only
+        """
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            command=True,
+            kwargs={'x2': "'20'"}
+        )
+        self.assertEqual(
+            pattern % pattern_args, "my_func x2='20'")
+
+    def test_42_format_func_input(self):
+        """Format input as shell command.
+
+        Case 1: no args, kwargs
+        Case 2: no args, kwargs and no first arg.
+        """
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            command=True
+        )
+        self.assertEqual(
+            pattern % pattern_args, "my_func")
+        pattern, pattern_args = formatting.format_func_input(
+            'my_func',
+            command=True,
+            no_first_arg=True,
+        )
+        self.assertEqual(
+            pattern % pattern_args, "my_func")

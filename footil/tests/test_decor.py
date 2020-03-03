@@ -42,6 +42,10 @@ def _func10(*args, **kwargs):
     pass
 
 
+def _func11(*args, **kwargs):
+    return '123'
+
+
 def _func_exception():
     raise TypeError("Some Type Error")
 
@@ -68,31 +72,31 @@ class _Dummy:
 class TestDecor(common.TestFootilCommon):
     """Test class for decorators."""
 
-    def test_time_it_msg_1(self):
+    def test_01_time_it_msg(self):
         """Time it message in milliseconds."""
         t = decor.time_it(uom='ms')
         msg = t._get_message(_dummy, 1)
         self.assertEqual(msg, "'_dummy' took 1000.00 millisecond(s)")
 
-    def test_time_it_msg_2(self):
+    def test_02_time_it_msg(self):
         """Time it message in seconds."""
         t = decor.time_it()
         msg = t._get_message(_dummy, 1)
         self.assertEqual(msg, "'_dummy' took 1.00 second(s)")
 
-    def test_time_it_msg_3(self):
+    def test_03_time_it_msg(self):
         """Time it message in minutes."""
         t = decor.time_it(uom='m')
         msg = t._get_message(_dummy, 60)
         self.assertEqual(msg, "'_dummy' took 1.00 minute(s)")
 
-    def test_time_it_msg_4(self):
+    def test_04_time_it_msg(self):
         """Time it message in hours."""
         t = decor.time_it(uom='h')
         msg = t._get_message(_dummy, 1800)
         self.assertEqual(msg, "'_dummy' took 0.50 hour(s)")
 
-    def test_time_it_msg_5(self):
+    def test_05_time_it_msg(self):
         """Time it message with different message format."""
         t = decor.time_it(
             msg_fmt='{arg1} test1 {c} {_uom_name}')
@@ -118,7 +122,7 @@ class TestDecor(common.TestFootilCommon):
         msg = t._get_message(_dummy, 1, args=('t1', 't2'))
         self.assertEqual(msg, "test3 second(s)")
 
-    def test_time_it_1(self):
+    def test_06_time_it(self):
         """Run decorator and capture its print output."""
         d = decor.time_it(uom='h')(_dummy)
         res = log.capture_output(d)
@@ -133,12 +137,12 @@ class TestDecor(common.TestFootilCommon):
     def _func11(self, a, b=5):
         pass
 
-    def test_args_kwargs_map_func1(self):
+    def test_07_args_kwargs_map_func1(self):
         """Map func1 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(_func1, 1, 2, 3)
         self.assertEqual(res, {'args': (1, 2, 3), 'kwargs': {}})
 
-    def test_args_kwargs_map_func2(self):
+    def test_08_args_kwargs_map_func2(self):
         """Map func2 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(_func2, a=5, b=10)
         self.assertEqual(res, {'args': (), 'kwargs': {'a': 5, 'b': 10}})
@@ -153,7 +157,7 @@ class TestDecor(common.TestFootilCommon):
         res = decor.catch_exceptions._map_args_kwargs(_func2, a=5, b=9)
         self.assertEqual(res, {'args': (), 'kwargs': {'a': 5, 'b': 9}})
 
-    def test_args_kwargs_map_func3(self):
+    def test_09_args_kwargs_map_func3(self):
         """Map func3 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(_func3, 1, 2, c=5, d=10)
         self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 5, 'd': 10}})
@@ -166,7 +170,7 @@ class TestDecor(common.TestFootilCommon):
         res = decor.catch_exceptions._map_args_kwargs(_func3, 1, 2, 3, 4)
         self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 3, 'd': 4}})
 
-    def test_args_kwargs_map_func4(self):
+    def test_10_args_kwargs_map_func4(self):
         """Map func4 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(_func4, 1, 2)
         self.assertEqual(res, {'args': (1, 2), 'kwargs': {}})
@@ -175,7 +179,7 @@ class TestDecor(common.TestFootilCommon):
         res = decor.catch_exceptions._map_args_kwargs(_func4, 1, 2, 3, 4)
         self.assertEqual(res, {'args': (1, 2, 3, 4), 'kwargs': {}})
 
-    def test_args_kwargs_map_func5(self):
+    def test_11_args_kwargs_map_func5(self):
         """Map func5 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(_func5, 1, 2, c=5)
         self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 5}})
@@ -186,7 +190,7 @@ class TestDecor(common.TestFootilCommon):
         res = decor.catch_exceptions._map_args_kwargs(_func5, 1, 2, 3, c=6)
         self.assertEqual(res, {'args': (1, 2, 3), 'kwargs': {'c': 6}})
 
-    def test_args_kwargs_map_func6(self):
+    def test_12_args_kwargs_map_func6(self):
         """Map func6 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(_func6, 1, 2, c=5)
         self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 5}})
@@ -197,7 +201,7 @@ class TestDecor(common.TestFootilCommon):
         res = decor.catch_exceptions._map_args_kwargs(_func6, 1, 2, c=5, d=10)
         self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 5, 'd': 10}})
 
-    def test_args_kwargs_map_func7(self):
+    def test_13_args_kwargs_map_func7(self):
         """Map func7 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(_func7, 1, 2, c=5)
         self.assertEqual(res, {'args': (1, 2), 'kwargs': {'c': 5}})
@@ -208,7 +212,7 @@ class TestDecor(common.TestFootilCommon):
         self.assertEqual(
             res, {'args': (1, 2, 3), 'kwargs': {'c': 5, 'd': 6}})
 
-    def test_args_kwargs_map_func8(self):
+    def test_14_args_kwargs_map_func8(self):
         """Map func8 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(_func8, 1, 2)
         self.assertEqual(res, {'args': (1, 2), 'kwargs': {}})
@@ -217,7 +221,7 @@ class TestDecor(common.TestFootilCommon):
         res = decor.catch_exceptions._map_args_kwargs(_func8)
         self.assertEqual(res, {'args': (), 'kwargs': {}})
 
-    def test_args_kwargs_map_func9(self):
+    def test_15_args_kwargs_map_func9(self):
         """Map func9 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(_func9, a=5, b=10)
         self.assertEqual(res, {'args': (), 'kwargs': {'a': 5, 'b': 10}})
@@ -226,7 +230,7 @@ class TestDecor(common.TestFootilCommon):
         res = decor.catch_exceptions._map_args_kwargs(_func9)
         self.assertEqual(res, {'args': (), 'kwargs': {}})
 
-    def test_args_kwargs_map_func10(self):
+    def test_16_args_kwargs_map_func10(self):
         """Map func10 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(_func10)
         self.assertEqual(res, {'args': (), 'kwargs': {}})
@@ -239,14 +243,14 @@ class TestDecor(common.TestFootilCommon):
         res = decor.catch_exceptions._map_args_kwargs(_func10, 1, 2, a=5, b=10)
         self.assertEqual(res, {'args': (1, 2), 'kwargs': {'a': 5, 'b': 10}})
 
-    def test_args_kwargs_map_func11(self):
+    def test_17_args_kwargs_map_func11(self):
         """Map func11 args/kwargs."""
         res = decor.catch_exceptions._map_args_kwargs(self._func11, 1, b=5)
         self.assertEqual(res, {'args': (self, 1,), 'kwargs': {'b': 5}})
         res = decor.catch_exceptions._map_args_kwargs(self._func11, 1, 2)
         self.assertEqual(res, {'args': (self, 1,), 'kwargs': {'b': 2}})
 
-    def test_catch_exception_1(self):
+    def test_18_catch_exception(self):
         """Catch TypeError and raise ValueError."""
         wrapped_f = decor.catch_exceptions([
             {
@@ -258,7 +262,7 @@ class TestDecor(common.TestFootilCommon):
         with self.assertRaises(ValueError):
             wrapped_f()
 
-    def test_catch_exception_2(self):
+    def test_19_catch_exception(self):
         """Catch TypeError and raise same error."""
         wrapped_f = decor.catch_exceptions([
             {
@@ -268,3 +272,55 @@ class TestDecor(common.TestFootilCommon):
         ])(_func_exception)
         with self.assertRaises(TypeError):
             wrapped_f()
+
+    def test_20_stdout_input(self):
+        """Use stdout input decorator with default options."""
+        wrapper_f = decor.stdout_input()(_func10)
+        stdout = log.capture_output(wrapper_f)
+        # \n is added by print statement.
+        self.assertEqual(stdout, '_func10()\n')
+        stdout = log.capture_output(
+            wrapper_f, args=(10, '20'), kwargs={'a': 30})
+        # \n is added by print statement.
+        self.assertEqual(stdout, "_func10(10, '20', a=30)\n")
+
+    def test_21_stdout_input(self):
+        """Use stdout input decorator with custom options."""
+        wrapper_f = decor.stdout_input(options={
+            'stdout_writer': print,
+            'no_first_arg': True,
+            'prefix': 'custom ',
+        })(_func10)
+        stdout = log.capture_output(wrapper_f)
+        self.assertEqual(stdout, 'custom _func10()\n')
+        wrapper_f = decor.stdout_input(options={
+            'stdout_getter': lambda *args, **kwargs: print,
+            'command': True
+        })(_func10)
+        stdout = log.capture_output(
+            wrapper_f, args=(10, '20'), kwargs={'a': 30})
+        self.assertEqual(stdout, "_func10 10 20 a=30\n")
+
+    def test_22_stdout_output(self):
+        """Use stdout output decorator with default options."""
+        wrapper_f = decor.stdout_output()(_func11)
+        stdout = log.capture_output(wrapper_f)
+        self.assertEqual(stdout, '123\n')
+        stdout = log.capture_output(
+            wrapper_f, args=(10, '20'), kwargs={'a': 30})
+        self.assertEqual(stdout, '123\n')
+
+    def test_23_stdout_output(self):
+        """Use stdout output decorator with custom options."""
+        wrapper_f = decor.stdout_output(options={
+            'stdout_writer': print,
+            'prefix': 'custom ',
+        })(_func11)
+        stdout = log.capture_output(wrapper_f)
+        self.assertEqual(stdout, 'custom 123\n')
+        wrapper_f = decor.stdout_output(options={
+            'stdout_getter': lambda *args, **kwargs: print,
+        })(_func11)
+        stdout = log.capture_output(
+            wrapper_f, args=(10, '20'), kwargs={'a': 30})
+        self.assertEqual(stdout, "123\n")

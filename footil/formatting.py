@@ -341,3 +341,83 @@ def strip_space(s: str):
 
     """
     return ''.join(s.split())
+
+
+def format_func_input(
+    func_name: str,
+    command: bool = False,
+    no_first_arg: bool = False,
+    prefix: str = '',
+    args: tuple = None,
+        kwargs: dict = None) -> tuple:
+    """Format function input for logging/printing.
+
+    Can create reproducible string to look like it was called as
+    function or command from shell.
+
+    Args:
+        func_name: function name to format it.
+        command: whether to format it as shell call. E.g.
+            func arg1 arg2. Otherwise its formatter as
+            func(arg1, arg2)
+        no_first_arg: whether to not include first argument in
+            formatting.
+        prefix: prefix to be added before format string.
+        args: function used argument.
+        kwargs: function used keyword arguments.
+
+    Returns:
+        tuple containing pattern string and arguments for it.
+
+    """
+    def get_options(command, have_args_kwargs):
+        if command:
+            sep = ' '
+            # If there are no args and kwargs, we dont need to start
+            # with space, cause there is nothing to separate from.
+            wrap_start = ' ' if have_args_kwargs else ''
+            wrap_end = ''
+            formatter_ = str
+        else:
+            sep = ', '
+            wrap_start = '('
+            wrap_end = ')'
+            formatter_ = repr
+        return sep, wrap_start, wrap_end, formatter_
+
+    def get_base_input(prefix, func_name):
+        return '%s%s' % (prefix, func_name)
+
+    def get_args_input_str(args):
+        return sep.join([formatter_(arg) for arg in args])
+
+    def get_kwargs_input_str(kwargs):
+        return sep.join(['{}={}'.format(
+            k, formatter_(v)) for k, v in kwargs.items()])
+
+    def combine_args_kwargs_input_str(
+            args_input_str, kwargs_input_str):
+        args_kwargs_input = []
+        if args_input_str:
+            args_kwargs_input.append(args_input_str)
+        kwargs_input_str = get_kwargs_input_str(kwargs)
+        if kwargs_input_str:
+            args_kwargs_input.append(kwargs_input_str)
+        return sep.join(args_kwargs_input)
+
+    if not args:
+        args = ()
+    if no_first_arg and args:
+        args = args[1:]
+    if not kwargs:
+        kwargs = {}
+    sep, wrap_start, wrap_end, formatter_ = get_options(
+        command, bool(args or kwargs))
+    base_input = get_base_input(prefix, func_name)
+    args_input_str = get_args_input_str(args)
+    kwargs_input_str = get_kwargs_input_str(kwargs)
+    args_kwargs_input_str = combine_args_kwargs_input_str(
+        args_input_str, kwargs_input_str)
+    return (
+        '%s%s%s%s', (base_input, wrap_start, args_kwargs_input_str, wrap_end)
+    )
