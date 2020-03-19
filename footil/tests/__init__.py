@@ -8,6 +8,7 @@ from . import (
     test_formatting,
     test_parsing,
     test_file,
+    test_patterns,
 )
 __all__ = [
     'common',
@@ -19,4 +20,5 @@ __all__ = [
     'test_formatting',
     'test_parsing',
     'test_file',
+    'test_patterns',
 ]

@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from footil import formatting
-from footil.lib import pattern_methods
+from footil.lib import string_pattern_methods
 
 from .common import TestFootilCommon, Dummy
 
@@ -199,24 +199,24 @@ class TestFormatting(TestFootilCommon):
         dummy = Dummy(parent=False, name='d1')
         dummy2 = Dummy(parent=dummy, name='d2')
         dummy3 = Dummy(parent=dummy2, name='d3', z='test')
-        res = pattern_methods._join_parent_attrs(
+        res = string_pattern_methods._join_parent_attrs(
             dummy3, 'parent', 'name', '.', _reversed=False)
         self.assertEqual(res, 'd3.d2.d1')
-        res = pattern_methods._join_parent_attrs(
+        res = string_pattern_methods._join_parent_attrs(
             dummy3, 'parent', 'name', '.', _reversed=True)
         self.assertEqual(res, 'd1.d2.d3')
         # Make it skip one parent.
         dummy4 = Dummy(parent=dummy3, name='d4')
-        res = pattern_methods._join_parent_attrs(
+        res = string_pattern_methods._join_parent_attrs(
             dummy4, 'parent.parent', 'name', _reversed=False)
         self.assertEqual(res, 'd4 / d2')
-        res = pattern_methods._join_parent_attrs(
+        res = string_pattern_methods._join_parent_attrs(
             dummy4, 'parent.parent', 'name', _reversed=True)
         self.assertEqual(res, 'd2 / d4')
         # Modify some values to be non string.
         dummy.name = 1
         dummy2.name = False
-        res = pattern_methods._join_parent_attrs(
+        res = string_pattern_methods._join_parent_attrs(
             dummy3, 'parent', 'name', '.',)
         self.assertEqual(res, '1.False.d3')
 

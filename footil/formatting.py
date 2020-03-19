@@ -10,11 +10,11 @@ from operator import attrgetter
 import re
 from email.utils import parseaddr, formataddr
 
-from footil.lib import pattern_methods
+from footil.lib import string_pattern_methods
 
 PATTERN_METHODS = {
     'join_parent_attrs': {
-        'method': pattern_methods._join_parent_attrs,
+        'method': string_pattern_methods._join_parent_attrs,
         # Key represents argument position and val method how
         # to convert argument.
         'conversion': {3: ast.literal_eval}
