@@ -30,9 +30,9 @@ class TestPatterns(common.TestFootilCommon):
 
     def test_02_command(self):
         """Execute commands in lifo order."""
-        invoker = self.DequeInvoker(priority='lifo')
+        invoker = self.DequeInvoker()
         invoker.add_command(self.mc1)
         invoker.add_command(self.mc2)
         invoker.add_command(self.mc3)
-        res = log.capture_output(invoker.run)
+        res = log.capture_output(invoker.run, kwargs={'priority': 'lifo'})
         self.assertEqual(res, 'cba')

@@ -38,7 +38,7 @@ class MethodCommand(Command):
 
 
 class DequeInvoker:
-    """deque based invoker to run commands in fifo/lifo order.
+    """deque based invoker to run commands in FIFO/LIFO priority.
 
     Once command is run, it is removed from invoker deque.
     """
@@ -48,12 +48,9 @@ class DequeInvoker:
         'lifo': 'pop'
     }
 
-    def __init__(self, priority: str = 'fifo'):
+    def __init__(self):
         """Init invoker class."""
         self._commands = deque()
-        self._pop_method = getattr(
-            self._commands, self._pop_methods_map[priority]
-        )
 
     @property
     def commands(self):
@@ -64,8 +61,9 @@ class DequeInvoker:
         """Add command to be run."""
         self.commands.append(command)
 
-    def run(self):
-        """Execute commands fifo/lifo order."""
+    def run(self, priority='fifo'):
+        """Execute commands using FIFO/LIFO priority."""
+        pop = getattr(self.commands, self._pop_methods_map[priority])
         while self.commands:
-            command = self._pop_method()
+            command = pop()
             command.execute()
