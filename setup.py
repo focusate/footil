@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='footil',
-    version='0.19.0',
+    version='0.20.0',
     packages=['footil', 'footil.lib'],
     license='LGPLv3',
     url='https://github.com/focusate/footil',

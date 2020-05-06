@@ -4,7 +4,6 @@ from dateutil.relativedelta import relativedelta
 from typing import Optional
 
 DATE_FMT = '%Y-%m-%d'
-DATETIME_FMT = '%Y-%m-%d %H:%M:%S'
 
 
 def _modify_date(
