@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from footil import formatting
-from footil.lib import string_pattern_methods
+from footil.tools import string_pattern_methods
 
 from .common import TestFootilCommon, Dummy
 

@@ -1,9 +1,11 @@
 from distutils.core import setup
 
+from footil import __version__
+
 setup(
     name='footil',
-    version='0.20.0',
-    packages=['footil', 'footil.lib'],
+    version=__version__,
+    packages=['footil', 'footil.tools'],
     license='LGPLv3',
     url='https://github.com/focusate/footil',
     description="Various Python helpers for other projects",
