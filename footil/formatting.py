@@ -10,7 +10,7 @@ from operator import attrgetter
 import re
 from email.utils import parseaddr, formataddr
 
-from footil.lib import string_pattern_methods
+from footil.tools import string_pattern_methods
 
 PATTERN_METHODS = {
     'join_parent_attrs': {
