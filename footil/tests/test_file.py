@@ -38,5 +38,5 @@ class TestFile(common.TestFootilCommon):
         f = file.WrittenNamedTemporaryFile(
             self.data, mode='w+t', delete=False, close=True)
         self.assertTrue(f.closed)
-        f = open(f.name)
-        self.assertEqual(f.read(), self.data)
+        with open(f.name) as f:
+            self.assertEqual(f.read(), self.data)

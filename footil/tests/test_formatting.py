@@ -52,14 +52,14 @@ class TestFormatting(TestFootilCommon):
         root = tree.getroot()
         self.assertEqual(root.items(), [('style', 'line-height: 1')])
         # Check root children.
-        root_childs = root.getchildren()
+        root_childs = list(root)
         self.assertEqual(len(root_childs), 3)
         p = root_childs[0]
         self.assertEqual(p.text, 'traceback:')
         div = root_childs[1]
         self.assertEqual(
             sorted(div.items()), [('class', 'collapse'), ('id', 'test_1'), ])
-        div_childs = div.getchildren()
+        div_childs = list(div)
         self.assertEqual(len(div_childs), 2)
         self.assertEqual(div_childs[0].text, 'something_went_wrong')
         self.assertEqual(div_childs[1].text, 'some_error')
@@ -78,7 +78,7 @@ class TestFormatting(TestFootilCommon):
             self.dummy_lst, formatter=formatting.format_list_to_html(
                 collapse_cfg={'max_lines': 1}))
         tree = ET.ElementTree(ET.fromstring(res))
-        root_childs = tree.getroot().getchildren()
+        root_childs = list(tree.getroot())
         div = root_childs[1]
         div_id = dict(div.items())['id']
         a = root_childs[2]
@@ -106,13 +106,13 @@ class TestFormatting(TestFootilCommon):
         root = tree.getroot()
         self.assertEqual(root.items(), [('style', 'line-height: 1')])
         # Check root children.
-        root_childs = root.getchildren()
+        root_childs = list(root)
         self.assertEqual(len(root_childs), 2)
         p = root_childs[0]
         self.assertEqual(p.text, 'traceback:')
         div = root_childs[1]
         self.assertEqual(div.items(), [('data-o-mail-quote', '1')])
-        div_childs = div.getchildren()
+        div_childs = list(div)
         self.assertEqual(len(div_childs), 2)
         self.assertEqual(div_childs[0].text, 'something_went_wrong')
         self.assertEqual(div_childs[1].text, 'some_error')
