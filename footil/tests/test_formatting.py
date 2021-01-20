@@ -490,3 +490,56 @@ class TestFormatting(TestFootilCommon):
         )
         self.assertEqual(
             pattern % pattern_args, "my_func")
+
+    def test_43_split_force(self):
+        """Split 'a b c' into 3 parts.
+
+        Case: sep=None, maxsplit=-1, defaults not used.
+        """
+        self.assertEqual(
+            formatting.split_force('a b c'),
+            ['a', 'b', 'c']
+        )
+
+    def test_44_split_force(self):
+        """Split 'a b c' into 2 parts.
+
+        Case: sep=None, maxsplit=1, default=None.
+        """
+        self.assertEqual(
+            formatting.split_force('a b c', maxsplit=1),
+            ['a', 'b c']
+        )
+
+    def test_45_split_force(self):
+        """Split 'a b c' into 4 parts.
+
+        Case: sep=None, maxsplit=3, default=None.
+        """
+        self.assertEqual(
+            formatting.split_force('a b c', maxsplit=3),
+            ['a', 'b', 'c', None]
+        )
+
+    def test_46_split_force(self):
+        """Split 'abc' into 4 parts.
+
+        Case: sep=' ', maxsplit=3, default=''.
+        """
+        self.assertEqual(
+            formatting.split_force(
+                'abc', sep=' ', maxsplit=3, default=''),
+            ['abc', '', '', '']
+        )
+
+    def test_47_split_force(self):
+        """Split 'a b c d' into 1 part.
+
+        Case: sep=' ', maxsplit=0, default=''.
+        """
+        self.assertEqual(
+            formatting.split_force(
+                'a b c d', sep=' ', maxsplit=0, default=''
+            ),
+            ['a b c d']
+        )

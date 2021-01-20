@@ -293,6 +293,7 @@ def replace_email(email_part: str, old_email: str) -> str:
     Args:
         email_part: new email to replace with.
         old_email: email to replace to.
+
     """
     name, _ = parseaddr(old_email)
     return formataddr((name, email_part))
@@ -327,7 +328,7 @@ def replace_ic(
     return insensitive_fragment.sub(replace_with, term)
 
 
-def strip_space(s: str):
+def strip_space(s: str) -> str:
     r"""Replace all spaces from string.
 
     Removes space like ' ', '\t', '\n' or '\r'. It will remove between
@@ -341,6 +342,40 @@ def strip_space(s: str):
 
     """
     return ''.join(s.split())
+
+
+def split_force(
+    s: str,
+    sep: Optional[str] = None,
+    maxsplit: int = -1,
+        default: any = None) -> list:
+    """Force split string into specified number of parts.
+
+    Always splits into specified maxsplit parts. If string can't be
+    split into that many parts, default value will be used to fill up
+    remaining parts.
+
+    maxsplit=-1 or 0 acts same way as builtin string `split`.
+
+    Args:
+        s: string to split
+        sep: the delimiter according which to split the string. None
+            means split according to any whitespace, and discard empty
+            strings from the result. (default: {None})
+        maxsplit: maximum number of splits to do. -1 means no limit.
+            (default: {-1})
+        default: value to use in filling splits that could not be done.
+            (default: {None})
+
+    Returns:
+        list of split string parts.
+
+    """
+    parts = s.split(sep=sep, maxsplit=maxsplit)
+    if maxsplit <= 0:  # matches builtin s.split
+        return parts
+    to_split_count = maxsplit - len(parts) + 1
+    return parts + [default] * to_split_count
 
 
 def format_func_input(
