@@ -378,6 +378,11 @@ def split_force(
     return parts + [default] * to_split_count
 
 
+def format_digits(s: str) -> str:
+    """Keep only digits in a string."""
+    return re.sub(r'\D', '', s)
+
+
 def format_func_input(
     func_name: str,
     command: bool = False,

@@ -543,3 +543,15 @@ class TestFormatting(TestFootilCommon):
             ),
             ['a b c d']
         )
+
+    def test_48_format_digits(self):
+        """Format string with digits/other chars."""
+        self.assertEqual(formatting.format_digits('123 abc'), '123')
+
+    def test_49_format_digits(self):
+        """Format string with digits only."""
+        self.assertEqual(formatting.format_digits('123'), '123')
+
+    def test_50_format_digits(self):
+        """Format string with non digits only."""
+        self.assertEqual(formatting.format_digits('abc '), '')
