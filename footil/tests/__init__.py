@@ -10,7 +10,8 @@ from . import (
     test_parsing,
     test_file,
     test_patterns,
-    test_sorting
+    test_sorting,
+    test_xdata,
 )
 __all__ = [
     common,
@@ -24,5 +25,6 @@ __all__ = [
     test_parsing,
     test_file,
     test_patterns,
-    test_sorting
+    test_sorting,
+    test_xdata,
 ]
