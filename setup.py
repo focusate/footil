@@ -14,7 +14,8 @@ setup(
         'yattag',
         'python-dateutil',
         'verboselogs',
-        'semver',
+        # TODO: upgrade to 3.*.* >= version once it is released.
+        'semver <= 2.9.1',
         'natsort',
     ],
     maintainer='Andrius Laukavičius',
