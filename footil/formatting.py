@@ -215,16 +215,11 @@ def generate_name(pattern: str, obj: object, strip_falsy: bool = True) -> str:
     # To track previous attribute value.
     attrs_vals = []
     for item in Formatter().parse(pattern):
-        # if item[1] is Falsy, it means there are no variables in
-        # string and we only got leading string from item[0]. With
-        # that information we can terminate function at this point,
-        # because there is nothing else to do.
+        # If no attribute to use, we can simply add next part of string
+        # to name.
         if not item[1]:
-            # Here we return pattern itself, instead of name,
-            # because name in this case is empty, but pattern
-            # already has all leading strings and parsed pattern
-            # methods if those were used.
-            return pattern
+            name += item[0]
+            continue
         # Get attribute value from attr key. We use attrgetter from
         # operator module to be able to access n-depth attributes.
         # In Other words access attribute of objects that are

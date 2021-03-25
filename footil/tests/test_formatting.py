@@ -125,11 +125,14 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(res, 'a / b')
 
     def test_06_generate_name_1(self):
-        """Get name using two attributes."""
-        # Modify dummy object by adding two attributes.
-        dummy = Dummy(a=10, b='test')
-        res = formatting.generate_name('{a} / {b}', dummy)
-        self.assertEqual(res, '10 / test')
+        """Get name using three attributes (one falsy)."""
+        # Modify dummy object by adding three attributes. Third is False
+        # to not be included.
+        dummy = Dummy(a=10, b='test', c=False)
+        # Adding parenthesis, to make sure parts without attributes are
+        # handled properly.
+        res = formatting.generate_name('{a} / ({b}) ({c})', dummy)
+        self.assertEqual(res, '10 / (test)')
 
     def test_07_generate_name_2(self):
         """Specify non existing attribute on pattern to raise error."""
