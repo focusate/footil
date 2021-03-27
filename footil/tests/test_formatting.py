@@ -8,12 +8,12 @@ from .common import TestFootilCommon, Dummy
 class TestFormatting(TestFootilCommon):
     """Test cases for formatting module."""
 
-    def test_01_formatted_exception_1(self):
+    def test_01_formatted_exception(self):
         """Use default formatting for exception list (no formatter)."""
         res = formatting._get_formatted_exception(self.dummy_lst)
         self.assertEqual(res, 'traceback:\nsomething_went_wrong\nsome_error\n')
 
-    def test_02_formatted_exception_2(self):
+    def test_02_formatted_exception(self):
         """Use html formatter for exception list.
 
         Case: full message is showed.
@@ -37,7 +37,7 @@ class TestFormatting(TestFootilCommon):
             '</div>')
         self.assertEqual(res, dest)
 
-    def test_03_formatted_exception_3(self):
+    def test_03_formatted_exception(self):
         """Use html formatter for exception list.
 
         Case: part of message is showed. Default bootstrap collapse is
@@ -86,7 +86,7 @@ class TestFormatting(TestFootilCommon):
         # Slice to remove '#'.
         self.assertEqual(div_id, a_data_target[1:])
 
-    def test_04_formatted_exception_4(self):
+    def test_04_formatted_exception(self):
         """Use html formatter for exception list.
 
         Case: part of message is showed. Custom attribute is
@@ -117,14 +117,14 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(div_childs[0].text, 'something_went_wrong')
         self.assertEqual(div_childs[1].text, 'some_error')
 
-    def test_05_generate_name_0(self):
+    def test_05_generate_name(self):
         """Get name without using any attributes."""
         # Modify dummy object by adding two attributes.
         dummy = Dummy(a=10, b='test')
         res = formatting.generate_name('a / b', dummy)
         self.assertEqual(res, 'a / b')
 
-    def test_06_generate_name_1(self):
+    def test_06_generate_name(self):
         """Get name using three attributes (one falsy)."""
         # Modify dummy object by adding three attributes. Third is False
         # to not be included.
@@ -134,7 +134,7 @@ class TestFormatting(TestFootilCommon):
         res = formatting.generate_name('{a} / ({b}) ({c})', dummy)
         self.assertEqual(res, '10 / (test)')
 
-    def test_07_generate_name_2(self):
+    def test_07_generate_name(self):
         """Specify non existing attribute on pattern to raise error."""
         dummy = Dummy(c=5)
         self.assertRaises(
@@ -143,40 +143,52 @@ class TestFormatting(TestFootilCommon):
             '{b} / {c}',
             dummy)
 
-    def test_08_generate_name_3(self):
+    def test_08_generate_name(self):
         """Strip falsy attributes."""
         dummy = Dummy(a=False, b='test')
-        dummy.a = False
         res = formatting.generate_name(
             '{a} / {b}', dummy, strip_falsy=True)
-        self.assertEqual('test', res)
+        self.assertEqual(res, 'test')
+        dummy = Dummy(a=False, b='test', c=False, d='test2')
+        res = formatting.generate_name(
+            '{a} / {b} / {c} / {d}', dummy, strip_falsy=True)
+        self.assertEqual(res, 'test / test2')
 
-    def test_09_generate_name_4(self):
+    def test_09_generate_name(self):
         """Do Not strip falsy attributes."""
         dummy = Dummy(a=False, b='test')
         res = formatting.generate_name(
             '{a} / {b}', dummy, strip_falsy=False)
-        self.assertEqual('False / test', res)
+        self.assertEqual(res, 'False / test')
 
-    def test_10_generate_name_5(self):
+    def test_10_generate_name(self):
         """Get name with attributes of attribute (n-depth access)."""
         dummy = Dummy(c=10)
         dummy2 = Dummy(b=dummy)
         dummy3 = Dummy(a=dummy2, b='something')
         res = formatting.generate_name(
             '{a.b.c} | {b}', dummy3, strip_falsy=True)
-        self.assertEqual('10 | something', res)
+        self.assertEqual(res, '10 | something')
         # Now by make c attr falsy to be stripped away.
         dummy.c = 0
         res = formatting.generate_name(
             '{a.b.c} | {b}', dummy3, strip_falsy=True)
-        self.assertEqual('something', res)
+        self.assertEqual(res, 'something')
         # Now do not strip falsy attribute.
         res = formatting.generate_name(
             '{a.b.c} | {b}', dummy3, strip_falsy=False)
-        self.assertEqual('0 | something', res)
+        self.assertEqual(res, '0 | something')
 
-    def test_11_generate_name_6(self):
+    def test_11_generate_name(self):
+        """Convert old style formatting and then generate name."""
+        fmt = '%(x)s\n%(y)s\n%(j)s'
+        new_fmt = formatting.to_new_named_format(fmt)
+        self.assertEqual(new_fmt, '{x}\n{y}\n{j}')
+        dummy = Dummy(x=33, y=False, j=11)
+        res = formatting.generate_name(new_fmt, dummy, strip_falsy=True)
+        self.assertEqual(res, '33\n11')
+
+    def test_12_generate_name(self):
         """Get name with recursive attributes pattern access."""
         dummy = Dummy(parent=False, name='d1', z='test0')
         dummy2 = Dummy(parent=dummy, name='d2')
@@ -197,7 +209,7 @@ class TestFormatting(TestFootilCommon):
             strip_falsy=False)
         self.assertEqual(res, "d1 - test0")
 
-    def test_12_join_parent_attrs(self):
+    def test_13_join_parent_attrs(self):
         """Join all truthy parents attributes."""
         dummy = Dummy(parent=False, name='d1')
         dummy2 = Dummy(parent=dummy, name='d2')
@@ -223,7 +235,7 @@ class TestFormatting(TestFootilCommon):
             dummy3, 'parent', 'name', '.',)
         self.assertEqual(res, '1.False.d3')
 
-    def test_13_generate_names_1(self):
+    def test_14_generate_names(self):
         """Generate names using iterator object. Default key."""
         dummy_1 = Dummy(c=10)
         dummy_1_2 = Dummy(b=dummy_1)
@@ -244,7 +256,7 @@ class TestFormatting(TestFootilCommon):
             {'pattern': '', 'objects': objects_lst})
         self.assertEqual(res, [(1, ''), (2, '')])
 
-    def test_14_generate_names_2(self):
+    def test_15_generate_names(self):
         """Generate names using iterator object. Specified key."""
         dummy_1 = Dummy(c=10)
         dummy_1_2 = Dummy(b=dummy_1)
@@ -257,102 +269,171 @@ class TestFormatting(TestFootilCommon):
             {'pattern': '{a.b.c} | {b}', 'objects': objects_lst, 'key': 'key'})
         self.assertEqual(res, [(1, '10 | something'), (2, '50 | something2')])
 
-    def test_15_generate_names_3(self):
+    def test_16_generate_names(self):
         """Try to call generate_names without required keys."""
         self.assertRaises(
             ValueError, formatting.generate_names, {'pattern': ''})
         self.assertRaises(
             ValueError, formatting.generate_names, {'objects': []})
 
-    def test_16_replace_email_name_1(self):
+    def test_17_replace_email_name(self):
         """Replace name for email 'A <a@b.com>'."""
         email = formatting.replace_email_name('B', 'A <a@b.com>')
         self.assertEqual(email, 'B <a@b.com>')
 
-    def test_17_replace_email_name_2(self):
+    def test_18_replace_email_name(self):
         """Replace name for email '<a@b.com>'."""
         email = formatting.replace_email_name('B', '<a@b.com>')
         self.assertEqual(email, 'B <a@b.com>')
 
-    def test_18_replace_email_name_3(self):
+    def test_19_replace_email_name(self):
         """Replace name for email 'a@b.com'."""
         email = formatting.replace_email_name('B', 'a@b.com')
         self.assertEqual(email, 'B <a@b.com>')
 
-    def test_19_replace_email_name_4(self):
+    def test_20_replace_email_name(self):
         """Replace name for email 'A a@b.com'."""
         email = formatting.replace_email_name('B', 'A a@b.com')
         self.assertEqual(email, 'B <A a@b.com>')
 
-    def test_20_replace_email_name_5(self):
+    def test_21_replace_email_name(self):
         """Replace name for email ''."""
         email = formatting.replace_email_name('B', '')
         self.assertEqual(email, 'B <>')
 
-    def test_21_replace_email_name_6(self):
+    def test_22_replace_email_name(self):
         """Replace name for email '' when name is ''."""
         email = formatting.replace_email_name('', '')
         self.assertEqual(email, '')
 
-    def test_22_replace_email_1(self):
+    def test_23_replace_email(self):
         """Replace email for email 'A <a@b.com>'."""
         email = formatting.replace_email('c@d.com', 'A <a@b.com>')
         self.assertEqual(email, 'A <c@d.com>')
 
-    def test_23_replace_email_2(self):
+    def test_24_replace_email(self):
         """Replace email for email '<a@b.com>'."""
         email = formatting.replace_email('<c@d.com>', '<a@b.com>')
         self.assertEqual(email, '<c@d.com>')
 
-    def test_24_replace_email_3(self):
+    def test_25_replace_email(self):
         """Replace email for email 'a@b.com'."""
         email = formatting.replace_email('c@d.com', 'a@b.com')
         self.assertEqual(email, 'c@d.com')
 
-    def test_25_replace_email_4(self):
+    def test_26_replace_email(self):
         """Replace email for email ''."""
         email = formatting.replace_email('c@d.com', '')
         self.assertEqual(email, 'c@d.com')
 
-    def test_26_replace_email_5(self):
+    def test_27_replace_email(self):
         """Replace email for email '' when name is ''."""
         email = formatting.replace_email('', '')
         self.assertEqual(email, '')
 
-    def test_27_replace_ic_1(self):
+    def test_28_to_new_named_format(self):
+        """Convert 'abcd' to new named args format."""
+        new_fmt = formatting.to_new_named_format('abcd')
+        self.assertEqual(new_fmt, 'abcd')
+
+    def test_29_to_new_named_format(self):
+        """Convert '%(x)s - %(y)s' to new named args format."""
+        new_fmt = formatting.to_new_named_format('%(x)s - %(y)s')
+        self.assertEqual(new_fmt, '{x} - {y}')
+
+    def test_30_to_new_named_format(self):
+        """Convert '%(x)s %% %%%(y)s' to new named args format."""
+        new_fmt = formatting.to_new_named_format('%(x)s %% %%%(y)s')
+        self.assertEqual(new_fmt, '{x} % %{y}')
+
+    def test_31_to_new_named_format(self):
+        """Convert '{ %(x)s } - {%%%(y)s}' to new named args format."""
+        new_fmt = formatting.to_new_named_format('{ %(x)s } - {%%%(y)s}')
+        self.assertEqual(new_fmt, '{{ {x} }} - {{%{y}}}')
+
+    def test_32_to_new_named_format(self):
+        """Convert '%%(x)s %(y)s' to new named args format."""
+        new_fmt = formatting.to_new_named_format('%%(x)s %(y)s')
+        self.assertEqual(new_fmt, '%(x)s {y}')
+
+    def test_33_to_new_named_format(self):
+        """Try to convert '%(x)s % %%%(y)s' to new named args format.
+
+        extra % is not escaped.
+        """
+        with self.assertRaises(ValueError):
+            formatting.to_new_named_format('%(x)s % %%%(y)s')
+
+    def test_34_to_new_pos_format(self):
+        """Convert 'abcd' to new named args format."""
+        new_fmt = formatting.to_new_pos_format('abcd')
+        self.assertEqual(new_fmt, 'abcd')
+
+    def test_35_to_new_pos_format(self):
+        """Convert '%(x)s - %(y)s' to new named args format."""
+        new_fmt = formatting.to_new_pos_format('%s - %s')
+        self.assertEqual(new_fmt, '{} - {}')
+
+    def test_36_to_new_pos_format(self):
+        """Convert '%s %% %%%s' to new named args format."""
+        new_fmt = formatting.to_new_pos_format('%s %% %%%s')
+        self.assertEqual(new_fmt, '{} % %{}')
+
+    def test_37_to_new_pos_format(self):
+        """Convert '{ %s } - {%%%s}' to new named args format."""
+        new_fmt = formatting.to_new_pos_format('{ %s } - {%%%s}')
+        self.assertEqual(new_fmt, '{{ {} }} - {{%{}}}')
+
+    def test_38_to_new_pos_format(self):
+        """Try to convert '%s % %%%s' to new named args format.
+
+        extra % is not escaped.
+        """
+        with self.assertRaises(ValueError):
+            formatting.to_new_pos_format('%s % %%%s')
+
+    def test_39_to_new_pos_format(self):
+        """Try to convert '%s %%s' to new named args format.
+
+        even % on placeholder s, means not enough arguments error.
+        """
+        with self.assertRaises(TypeError):
+            formatting.to_new_pos_format('%s %%s')
+
+    def test_40_replace_ic(self):
         """Replace 'HelLo' with default replace_with ('')."""
         new_term = formatting.replace_ic('Hello and heLLo And hello', 'HelLo')
         self.assertEqual(new_term, ' and  And ')
 
-    def test_28_replace_ic_2(self):
+    def test_41_replace_ic(self):
         """Replace 'HelLo' with 'byE' (existing fragment)."""
         new_term = formatting.replace_ic(
             'Hello and heLLo And hello', 'HelLo', 'byE')
         self.assertEqual(new_term, 'byE and byE And byE')
 
-    def test_29_replace_ic_3(self):
+    def test_42_replace_ic(self):
         """Replace 'byE' with 'HelLo' (non existing fragment)."""
         new_term = formatting.replace_ic(
             'Hello and heLLo And hello', 'byE', 'HelLo')
         # Term should left unchanged.
         self.assertEqual(new_term, 'Hello and heLLo And hello')
 
-    def test_30_strip_space(self):
+    def test_43_strip_space(self):
         """Strip string without spaces."""
         s = formatting.strip_space('abc')
         self.assertEqual(s, 'abc')
 
-    def test_31_strip_space(self):
+    def test_44_strip_space(self):
         """Strip string with white space only."""
         s = formatting.strip_space('\tabc ')
         self.assertEqual(s, 'abc')
 
-    def test_32_strip_space(self):
+    def test_45_strip_space(self):
         """Strip string with white space and space around chars."""
         s = formatting.strip_space('\tab c \nd\r')
         self.assertEqual(s, 'abcd')
 
-    def test_33_format_func_input(self):
+    def test_46_format_func_input(self):
         """Format input as normal function.
 
         Case: args, kwargs passed.
@@ -364,7 +445,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func('a', 'b', x=10)")
 
-    def test_34_format_func_input(self):
+    def test_47_format_func_input(self):
         """Format input as normal function.
 
         Case: args, kwargs passed. First arg ignored.
@@ -378,7 +459,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func('b', x2='20')")
 
-    def test_35_format_func_input(self):
+    def test_48_format_func_input(self):
         """Format input as normal function.
 
         Case: args only
@@ -390,7 +471,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func('a', 'b')")
 
-    def test_36_format_func_input(self):
+    def test_49_format_func_input(self):
         """Format input as normal function.
 
         Case: kwargs only
@@ -402,7 +483,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func(x=10)")
 
-    def test_37_format_func_input(self):
+    def test_50_format_func_input(self):
         """Format input as normal function.
 
         Case 1: no args, kwargs
@@ -420,7 +501,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func()")
 
-    def test_38_format_func_input(self):
+    def test_51_format_func_input(self):
         """Format input as shell command.
 
         Case: args, kwargs passed.
@@ -433,7 +514,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func a b x=10")
 
-    def test_39_format_func_input(self):
+    def test_52_format_func_input(self):
         """Format input as shell command.
 
         Case: args, kwargs passed. First arg ignored.
@@ -448,7 +529,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func b x2=20")
 
-    def test_40_format_func_input(self):
+    def test_53_format_func_input(self):
         """Format input as shell command.
 
         Case: args only
@@ -461,7 +542,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func a b")
 
-    def test_41_format_func_input(self):
+    def test_54_format_func_input(self):
         """Format input as shell command.
 
         Case: kwargs only
@@ -474,7 +555,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func x2='20'")
 
-    def test_42_format_func_input(self):
+    def test_55_format_func_input(self):
         """Format input as shell command.
 
         Case 1: no args, kwargs
@@ -494,7 +575,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func")
 
-    def test_43_split_force(self):
+    def test_56_split_force(self):
         """Split 'a b c' into 3 parts.
 
         Case: sep=None, maxsplit=-1, defaults not used.
@@ -504,7 +585,7 @@ class TestFormatting(TestFootilCommon):
             ['a', 'b', 'c']
         )
 
-    def test_44_split_force(self):
+    def test_57_split_force(self):
         """Split 'a b c' into 2 parts.
 
         Case: sep=None, maxsplit=1, default=None.
@@ -514,7 +595,7 @@ class TestFormatting(TestFootilCommon):
             ['a', 'b c']
         )
 
-    def test_45_split_force(self):
+    def test_58_split_force(self):
         """Split 'a b c' into 4 parts.
 
         Case: sep=None, maxsplit=3, default=None.
@@ -524,7 +605,7 @@ class TestFormatting(TestFootilCommon):
             ['a', 'b', 'c', None]
         )
 
-    def test_46_split_force(self):
+    def test_59_split_force(self):
         """Split 'abc' into 4 parts.
 
         Case: sep=' ', maxsplit=3, default=''.
@@ -535,7 +616,7 @@ class TestFormatting(TestFootilCommon):
             ['abc', '', '', '']
         )
 
-    def test_47_split_force(self):
+    def test_60_split_force(self):
         """Split 'a b c d' into 1 part.
 
         Case: sep=' ', maxsplit=0, default=''.
@@ -547,14 +628,14 @@ class TestFormatting(TestFootilCommon):
             ['a b c d']
         )
 
-    def test_48_format_digits(self):
+    def test_61_format_digits(self):
         """Format string with digits/other chars."""
         self.assertEqual(formatting.format_digits('123 abc'), '123')
 
-    def test_49_format_digits(self):
+    def test_62_format_digits(self):
         """Format string with digits only."""
         self.assertEqual(formatting.format_digits('123'), '123')
 
-    def test_50_format_digits(self):
+    def test_63_format_digits(self):
         """Format string with non digits only."""
         self.assertEqual(formatting.format_digits('abc '), '')

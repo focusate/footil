@@ -1,5 +1,4 @@
 from . import (
-    common,
     test_decor,
     test_log,
     test_xtyping,
@@ -14,7 +13,6 @@ from . import (
     test_xdata,
 )
 __all__ = [
-    common,
     test_decor,
     test_log,
     test_xtyping,

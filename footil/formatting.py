@@ -21,6 +21,9 @@ PATTERN_METHODS = {
     }
 }
 
+ODD_REPEAT_PATTERN = r'((?<!{c}){c}({c}{c})*(?!{c}))'
+EVEN_REPEAT_PATTERN = r'(?<!{c})({c}{c})+(?!{c})'
+
 
 def format_list_to_html(
         line_height=1, collapse_cfg: Optional[dict] = None) -> str:
@@ -191,30 +194,24 @@ def generate_name(pattern: str, obj: object, strip_falsy: bool = True) -> str:
         str
 
     """
-    def get_prev_attr_val():
-        attr_vals_len = len(attrs_vals)
-        if attr_vals_len > 1:
-            return attrs_vals[attr_vals_len-2]
-
-    def get_leading_str(leading_str):
-        prev_attr_val = get_prev_attr_val()
-        # None means, current item is first and there is no previous
-        # one.
-        if prev_attr_val is None:
-            return leading_str
-        # We have falsy value (on prev attribute) and we need to
-        # strip it away, so we use empty string.
-        if not prev_attr_val and strip_falsy:
-            return ''
-        return leading_str
+    def prepare_val(idx):
+        literal_text, attr_val = fname_vals[idx]
+        if attr_val or not strip_falsy:
+            attr_val_str = str(attr_val)
+            # Edge case, when first item was false and we don't want to
+            # keep leading string hanging.
+            if idx == 1 and not fname_vals[0][1] and strip_falsy:
+                return attr_val_str
+            return literal_text + attr_val_str
+        return ''
 
     # First parse pattern methods if there are any defined on a
     # pattern.
     pattern = _parse_pattern_methods(pattern, obj)
     name = ''
     # To track previous attribute value.
-    attrs_vals = []
-    for item in Formatter().parse(pattern):
+    fname_vals = {}
+    for idx, item in enumerate(Formatter().parse(pattern)):
         # If no attribute to use, we can simply add next part of string
         # to name.
         if not item[1]:
@@ -226,11 +223,8 @@ def generate_name(pattern: str, obj: object, strip_falsy: bool = True) -> str:
         # related with another object.
         f = attrgetter(item[1])  # item[1] is attribute key.
         attr_val = f(obj)
-        attrs_vals.append(attr_val)
-        # item[0] holds original leading string.
-        leading_str = get_leading_str(item[0])
-        if attr_val or not strip_falsy:
-            name += leading_str + str(attr_val)
+        fname_vals[idx] = (item[0], attr_val)
+        name += prepare_val(idx)
     return name
 
 
@@ -295,6 +289,73 @@ def replace_email(email_part: str, old_email: str) -> str:
 
 
 # String formatting
+
+
+def __to_new_format(fmt: str, named=True):
+    def to_named_fmt(fmt):
+        pattern = rf'{odd_perc_pattern}\((.*?)\)s'
+        match = re.search(pattern, fmt)
+        while match:
+            # Only care about placeholder group here.
+            __, __, placeholder = match.groups()
+            fmt = fmt.replace(
+                f'%({placeholder})s',
+                f'{{{placeholder}}}'
+            )
+            match = re.search(pattern, fmt)
+        return fmt
+
+    def to_pos_fmt(fmt):
+        even_perc_pattern = EVEN_REPEAT_PATTERN.format(c='%')
+        pattern = rf'{even_perc_pattern}s'
+        # When positional placeholder has even amount of percents, it
+        # will be treated as not having enough arguments passed.
+        if re.search(pattern, fmt):
+            raise TypeError(
+                'not all arguments converted during string formatting'
+            )
+        return fmt.replace('%s', '{}')
+
+    odd_perc_pattern = ODD_REPEAT_PATTERN.format(c='%')
+    # Escape `{` and `}`, because new formatting uses it.
+    fmt = fmt.replace('{', '{{').replace('}', '}}')
+    fmt = to_named_fmt(fmt) if named else to_pos_fmt(fmt)
+    # If we find odd number of occurring percentage symbols, it means
+    # those were not escaped and we can't finish conversion.
+    if re.search(odd_perc_pattern, fmt):
+        raise ValueError('incomplete format')
+    return fmt.replace('%%', '%')
+
+
+def to_new_named_format(fmt: str) -> str:
+    """Convert old style named formatting to new style formatting.
+
+    For example: '%(x)s - %%%(y)s' -> '{x} - %{y}'
+
+    Args:
+        fmt: old style formatting to convert.
+
+    Returns:
+        new style formatting.
+
+    """
+    return __to_new_format(fmt, named=True)
+
+
+def to_new_pos_format(fmt: str) -> str:
+    """Convert old style positional formatting to new style formatting.
+
+    For example: '%s - %%%s' -> '{} - %{}'
+
+    Args:
+        fmt: old style formatting to convert.
+
+    Returns:
+        new style formatting.
+
+    """
+    return __to_new_format(fmt, named=False)
+
 
 def replace_ic(
     term: str,
