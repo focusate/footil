@@ -288,6 +288,31 @@ def replace_email(email_part: str, old_email: str) -> str:
     return formataddr((name, email_part))
 
 
+def email_to_domain(email: str) -> str:
+    """Extract domain part from email.
+
+    If can't extract domain, empty string is returned instead.
+
+    Args:
+        email: email to extract domain from.
+
+    Returns:
+        email's domain part.
+        str
+
+    """
+    # First parse into name and email parts, so we would not have any
+    # artifacts hanging like `<>` or email name etc.
+    email = parseaddr(email)[1]  # Falsy value returns `('', '')`
+    if email:
+        email_parts = email.split('@', 1)
+        # Assuming that everything after @ is now domain.
+        if len(email_parts) == 2:
+            # Second part is domain.
+            return email_parts[1]
+    return ''
+
+
 # String formatting
 
 
