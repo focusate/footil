@@ -288,6 +288,29 @@ def replace_email(email_part: str, old_email: str) -> str:
     return formataddr((name, email_part))
 
 
+def email_to_alias_and_domain(email: str):
+    """Extract alias and domain part from email.
+
+    If can't extract alias/domain, tuple with empty strings is returned
+    instead.
+
+    Args:
+        email: email to extract alias with domain from.
+
+    Returns:
+        email's alias with domain.
+        tuple
+
+    """
+    email = parseaddr(email)[1]  # Falsy value returns `('', '')`
+    if email:
+        email_parts = email.split('@', 1)
+        # Assuming that alias and domain are separated by @.
+        if len(email_parts) == 2:
+            return email_parts
+    return ('', '')
+
+
 def email_to_domain(email: str) -> str:
     """Extract domain part from email.
 
@@ -301,16 +324,23 @@ def email_to_domain(email: str) -> str:
         str
 
     """
-    # First parse into name and email parts, so we would not have any
-    # artifacts hanging like `<>` or email name etc.
-    email = parseaddr(email)[1]  # Falsy value returns `('', '')`
-    if email:
-        email_parts = email.split('@', 1)
-        # Assuming that everything after @ is now domain.
-        if len(email_parts) == 2:
-            # Second part is domain.
-            return email_parts[1]
-    return ''
+    return email_to_alias_and_domain(email)[1]
+
+
+def email_to_alias(email: str) -> str:
+    """Extract alias part from email.
+
+    If can't extract alias, empty string is returned instead.
+
+    Args:
+        email: email to extract alias from.
+
+    Returns:
+        email's alias part.
+        str
+
+    """
+    return email_to_alias_and_domain(email)[0]
 
 
 # String formatting

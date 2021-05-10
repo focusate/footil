@@ -366,32 +366,67 @@ class TestFormatting(TestFootilCommon):
             ''
         )
 
-    def test_33_to_new_named_format(self):
+    def test_33_email_to_alias(self):
+        """Extract alias from 'John Doe <a@b.com>' ."""
+        self.assertEqual(
+            formatting.email_to_alias('John Doe <a@b.com>'),
+            'a'
+        )
+
+    def test_34_email_to_alias(self):
+        r"""Extract alias from '\"John Doe\"a@b.com'."""
+        self.assertEqual(
+            formatting.email_to_alias('"John Doe" <a@b.com>'),
+            'a'
+        )
+
+    def test_35_email_to_alias(self):
+        """Extract alias from 'a@b.com'."""
+        self.assertEqual(
+            formatting.email_to_alias('a@b.com'),
+            'a'
+        )
+
+    def test_36_email_to_alias(self):
+        """Try to extract alias from ''."""
+        self.assertEqual(
+            formatting.email_to_alias(''),
+            ''
+        )
+
+    def test_37_email_to_alias(self):
+        """Try to extract alias from 'a-eta-b.com'."""
+        self.assertEqual(
+            formatting.email_to_alias('a-eta-b.com'),
+            ''
+        )
+
+    def test_38_to_new_named_format(self):
         """Convert 'abcd' to new named args format."""
         new_fmt = formatting.to_new_named_format('abcd')
         self.assertEqual(new_fmt, 'abcd')
 
-    def test_34_to_new_named_format(self):
+    def test_39_to_new_named_format(self):
         """Convert '%(x)s - %(y)s' to new named args format."""
         new_fmt = formatting.to_new_named_format('%(x)s - %(y)s')
         self.assertEqual(new_fmt, '{x} - {y}')
 
-    def test_35_to_new_named_format(self):
+    def test_40_to_new_named_format(self):
         """Convert '%(x)s %% %%%(y)s' to new named args format."""
         new_fmt = formatting.to_new_named_format('%(x)s %% %%%(y)s')
         self.assertEqual(new_fmt, '{x} % %{y}')
 
-    def test_36_to_new_named_format(self):
+    def test_41_to_new_named_format(self):
         """Convert '{ %(x)s } - {%%%(y)s}' to new named args format."""
         new_fmt = formatting.to_new_named_format('{ %(x)s } - {%%%(y)s}')
         self.assertEqual(new_fmt, '{{ {x} }} - {{%{y}}}')
 
-    def test_37_to_new_named_format(self):
+    def test_42_to_new_named_format(self):
         """Convert '%%(x)s %(y)s' to new named args format."""
         new_fmt = formatting.to_new_named_format('%%(x)s %(y)s')
         self.assertEqual(new_fmt, '%(x)s {y}')
 
-    def test_38_to_new_named_format(self):
+    def test_43_to_new_named_format(self):
         """Try to convert '%(x)s % %%%(y)s' to new named args format.
 
         extra % is not escaped.
@@ -399,27 +434,27 @@ class TestFormatting(TestFootilCommon):
         with self.assertRaises(ValueError):
             formatting.to_new_named_format('%(x)s % %%%(y)s')
 
-    def test_39_to_new_pos_format(self):
+    def test_44_to_new_pos_format(self):
         """Convert 'abcd' to new named args format."""
         new_fmt = formatting.to_new_pos_format('abcd')
         self.assertEqual(new_fmt, 'abcd')
 
-    def test_40_to_new_pos_format(self):
+    def test_45_to_new_pos_format(self):
         """Convert '%(x)s - %(y)s' to new named args format."""
         new_fmt = formatting.to_new_pos_format('%s - %s')
         self.assertEqual(new_fmt, '{} - {}')
 
-    def test_41_to_new_pos_format(self):
+    def test_46_to_new_pos_format(self):
         """Convert '%s %% %%%s' to new named args format."""
         new_fmt = formatting.to_new_pos_format('%s %% %%%s')
         self.assertEqual(new_fmt, '{} % %{}')
 
-    def test_42_to_new_pos_format(self):
+    def test_47_to_new_pos_format(self):
         """Convert '{ %s } - {%%%s}' to new named args format."""
         new_fmt = formatting.to_new_pos_format('{ %s } - {%%%s}')
         self.assertEqual(new_fmt, '{{ {} }} - {{%{}}}')
 
-    def test_43_to_new_pos_format(self):
+    def test_48_to_new_pos_format(self):
         """Try to convert '%s % %%%s' to new named args format.
 
         extra % is not escaped.
@@ -427,7 +462,7 @@ class TestFormatting(TestFootilCommon):
         with self.assertRaises(ValueError):
             formatting.to_new_pos_format('%s % %%%s')
 
-    def test_44_to_new_pos_format(self):
+    def test_49_to_new_pos_format(self):
         """Try to convert '%s %%s' to new named args format.
 
         even % on placeholder s, means not enough arguments error.
@@ -435,40 +470,40 @@ class TestFormatting(TestFootilCommon):
         with self.assertRaises(TypeError):
             formatting.to_new_pos_format('%s %%s')
 
-    def test_45_replace_ic(self):
+    def test_50_replace_ic(self):
         """Replace 'HelLo' with default replace_with ('')."""
         new_term = formatting.replace_ic('Hello and heLLo And hello', 'HelLo')
         self.assertEqual(new_term, ' and  And ')
 
-    def test_46_replace_ic(self):
+    def test_51_replace_ic(self):
         """Replace 'HelLo' with 'byE' (existing fragment)."""
         new_term = formatting.replace_ic(
             'Hello and heLLo And hello', 'HelLo', 'byE')
         self.assertEqual(new_term, 'byE and byE And byE')
 
-    def test_47_replace_ic(self):
+    def test_52_replace_ic(self):
         """Replace 'byE' with 'HelLo' (non existing fragment)."""
         new_term = formatting.replace_ic(
             'Hello and heLLo And hello', 'byE', 'HelLo')
         # Term should left unchanged.
         self.assertEqual(new_term, 'Hello and heLLo And hello')
 
-    def test_48_strip_space(self):
+    def test_53_strip_space(self):
         """Strip string without spaces."""
         s = formatting.strip_space('abc')
         self.assertEqual(s, 'abc')
 
-    def test_49_strip_space(self):
+    def test_54_strip_space(self):
         """Strip string with white space only."""
         s = formatting.strip_space('\tabc ')
         self.assertEqual(s, 'abc')
 
-    def test_50_strip_space(self):
+    def test_55_strip_space(self):
         """Strip string with white space and space around chars."""
         s = formatting.strip_space('\tab c \nd\r')
         self.assertEqual(s, 'abcd')
 
-    def test_51_format_func_input(self):
+    def test_56_format_func_input(self):
         """Format input as normal function.
 
         Case: args, kwargs passed.
@@ -480,7 +515,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func('a', 'b', x=10)")
 
-    def test_52_format_func_input(self):
+    def test_57_format_func_input(self):
         """Format input as normal function.
 
         Case: args, kwargs passed. First arg ignored.
@@ -494,7 +529,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func('b', x2='20')")
 
-    def test_53_format_func_input(self):
+    def test_58_format_func_input(self):
         """Format input as normal function.
 
         Case: args only
@@ -506,7 +541,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func('a', 'b')")
 
-    def test_54_format_func_input(self):
+    def test_59_format_func_input(self):
         """Format input as normal function.
 
         Case: kwargs only
@@ -518,7 +553,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func(x=10)")
 
-    def test_55_format_func_input(self):
+    def test_60_format_func_input(self):
         """Format input as normal function.
 
         Case 1: no args, kwargs
@@ -536,7 +571,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func()")
 
-    def test_56_format_func_input(self):
+    def test_61_format_func_input(self):
         """Format input as shell command.
 
         Case: args, kwargs passed.
@@ -549,7 +584,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func a b x=10")
 
-    def test_57_format_func_input(self):
+    def test_62_format_func_input(self):
         """Format input as shell command.
 
         Case: args, kwargs passed. First arg ignored.
@@ -564,7 +599,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func b x2=20")
 
-    def test_58_format_func_input(self):
+    def test_63_format_func_input(self):
         """Format input as shell command.
 
         Case: args only
@@ -577,7 +612,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func a b")
 
-    def test_59_format_func_input(self):
+    def test_64_format_func_input(self):
         """Format input as shell command.
 
         Case: kwargs only
@@ -590,7 +625,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func x2='20'")
 
-    def test_60_format_func_input(self):
+    def test_65_format_func_input(self):
         """Format input as shell command.
 
         Case 1: no args, kwargs
@@ -610,7 +645,7 @@ class TestFormatting(TestFootilCommon):
         self.assertEqual(
             pattern % pattern_args, "my_func")
 
-    def test_61_split_force(self):
+    def test_66_split_force(self):
         """Split 'a b c' into 3 parts.
 
         Case: sep=None, maxsplit=-1, defaults not used.
@@ -620,7 +655,7 @@ class TestFormatting(TestFootilCommon):
             ['a', 'b', 'c']
         )
 
-    def test_62_split_force(self):
+    def test_67_split_force(self):
         """Split 'a b c' into 2 parts.
 
         Case: sep=None, maxsplit=1, default=None.
@@ -630,7 +665,7 @@ class TestFormatting(TestFootilCommon):
             ['a', 'b c']
         )
 
-    def test_63_split_force(self):
+    def test_68_split_force(self):
         """Split 'a b c' into 4 parts.
 
         Case: sep=None, maxsplit=3, default=None.
@@ -640,7 +675,7 @@ class TestFormatting(TestFootilCommon):
             ['a', 'b', 'c', None]
         )
 
-    def test_64_split_force(self):
+    def test_69_split_force(self):
         """Split 'abc' into 4 parts.
 
         Case: sep=' ', maxsplit=3, default=''.
@@ -651,7 +686,7 @@ class TestFormatting(TestFootilCommon):
             ['abc', '', '', '']
         )
 
-    def test_65_split_force(self):
+    def test_70_split_force(self):
         """Split 'a b c d' into 1 part.
 
         Case: sep=' ', maxsplit=0, default=''.
@@ -663,14 +698,14 @@ class TestFormatting(TestFootilCommon):
             ['a b c d']
         )
 
-    def test_66_format_digits(self):
+    def test_71_format_digits(self):
         """Format string with digits/other chars."""
         self.assertEqual(formatting.format_digits('123 abc'), '123')
 
-    def test_67_format_digits(self):
+    def test_72_format_digits(self):
         """Format string with digits only."""
         self.assertEqual(formatting.format_digits('123'), '123')
 
-    def test_68_format_digits(self):
+    def test_73_format_digits(self):
         """Format string with non digits only."""
         self.assertEqual(formatting.format_digits('abc '), '')
