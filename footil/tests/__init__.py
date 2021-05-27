@@ -11,6 +11,7 @@ from . import (
     test_patterns,
     test_sorting,
     test_xdata,
+    test_xcollections,
 )
 __all__ = [
     test_decor,
@@ -25,4 +26,5 @@ __all__ = [
     test_patterns,
     test_sorting,
     test_xdata,
+    test_xcollections,
 ]
