@@ -65,3 +65,14 @@ def str_to_bytes(val, encoding='utf-8', errors='strict') -> bytes:
 @str_to_bytes.register(bytes)
 def __bytes_to_bytes(val, *args, **kw):
     return val
+
+
+def dict_to_namedtuple(name: str, dct: dict) -> collections.namedtuple:
+    """Convert dictionary to namedtuple.
+
+    Args:
+        name: name for namedtuple object.
+        dct: dictionary to convert into namedtuple.
+
+    """
+    return collections.namedtuple(name, dct.keys())(*dct.values())

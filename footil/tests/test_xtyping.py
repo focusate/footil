@@ -42,3 +42,9 @@ class TestXtyping(common.TestFootilCommon):
         """Convert bytes to bytes."""
         self.assertEqual(xtyping.str_to_bytes(
             b'123', encoding='utf-8'), b'123')
+
+    def test_10_dict_to_namedtuple(self):
+        """Convert dictionary to namedtuple."""
+        obj = xtyping.dict_to_namedtuple("X1", {'a': 10, 'b': 20})
+        self.assertEqual(obj.a, 10)
+        self.assertEqual(obj.b, 20)
