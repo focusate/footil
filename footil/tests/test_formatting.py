@@ -709,3 +709,62 @@ class TestFormatting(TestFootilCommon):
     def test_73_format_digits(self):
         """Format string with non digits only."""
         self.assertEqual(formatting.format_digits('abc '), '')
+
+    def test_74_format_same_type_vals(self):
+        """Upper dict's vals"""
+        dct = {
+            'name': 'long_name',
+            'pass': 'p@ssw0rd!',
+            'age': 'pretty_old',
+        }
+        formatting.format_same_type_vals(
+            dct, ['name', 'pass'], 'upper'
+        ),
+        self.assertDictEqual(
+            dct,
+            {
+                'name': 'LONG_NAME',
+                'pass': 'P@SSW0RD!',
+                'age': 'pretty_old',
+            }
+        )
+
+    def test_75_format_same_type_vals(self):
+        """Do nothing when no keys specified"""
+        dct = {
+            'name': 'long_name',
+            'pass': 'p@ssw0rd!',
+            'age': 'pretty_old',
+        }
+        formatting.format_same_type_vals(dct, [], 'upper'),
+        self.assertDictEqual(
+            dct,
+            {
+                'name': 'long_name',
+                'pass': 'p@ssw0rd!',
+                'age': 'pretty_old',
+            }
+        )
+
+    def test_76_format_same_type_vals(self):
+        """Format strings with kwargs"""
+        dct = {
+            'greeting': 'Hello {name}',
+            'age': 'My age is {age}',
+        }
+        formatting.format_same_type_vals(
+            dct,
+            ['greeting', 'age'],
+            'format',
+            kwargs={
+                'name': 'Foo',
+                'age': 20
+            }
+        )
+        self.assertDictEqual(
+            dct,
+            {
+                'greeting': 'Hello Foo',
+                'age': 'My age is 20',
+            }
+        )

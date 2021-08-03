@@ -572,3 +572,28 @@ def format_func_input(
     return (
         '%s%s%s%s', (base_input, wrap_start, args_kwargs_input_str, wrap_end)
     )
+
+
+def format_same_type_vals(
+        dct: dict,
+        keys: list,
+        method_name: str,
+        args=None,
+        kwargs=None) -> None:
+    """Update values having same type.
+
+    Args:
+        dct: dictionary to update.
+        keys: keys to update their values.
+        method_name: method to call from retrieved value.
+        args: positional arguments to call for method_name (default: {None}).
+        kwargs: keyword arguments to call for method_name (default: {None}).
+    """
+    if not args:
+        args = ()
+    if not kwargs:
+        kwargs = {}
+    for key in keys:
+        old_val = dct[key]
+        method = getattr(old_val, method_name)
+        dct[key] = method(*args, **kwargs)
