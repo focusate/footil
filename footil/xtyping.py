@@ -4,10 +4,14 @@ import six
 from functools import singledispatch
 
 
-def is_iterable(obj):
-    """Return True if object is iterable, but is not a string."""
-    return (isinstance(obj, collections.abc.Iterable) and not
-            isinstance(obj, six.string_types))
+def is_string(val) -> bool:
+    """Return True if value is string, False otherwise."""
+    return isinstance(val, six.string_types)
+
+
+def is_iterable(val) -> bool:
+    """Return True if value is iterable, but is not a string."""
+    return isinstance(val, collections.abc.Iterable) and not is_string(val)
 
 
 @singledispatch
