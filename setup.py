@@ -2,6 +2,15 @@ from distutils.core import setup
 
 from footil import __version__
 
+test_deps = [
+    "pytest",
+    "mock",
+]
+
+extras = {
+    'test': test_deps,
+}
+
 setup(
     name='footil',
     version=__version__,
@@ -15,9 +24,11 @@ setup(
         'python-dateutil',
         'verboselogs',
         # TODO: upgrade to 3.*.* >= version once it is released.
-        'semver <= 2.9.1',
+        'semver <= 2.13.0',
         'natsort',
     ],
+    tests_require=test_deps,
+    extras_require=extras,
     maintainer='Andrius Laukavičius',
     maintainer_email='dev@focusate.eu',
     python_requires='>=3.5',

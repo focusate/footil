@@ -1,7 +1,7 @@
 """Module to manage version validation and bumping."""
 import abc
 from typing import Any, Iterable, Optional, Union, Callable
-import semver
+from semver import VersionInfo
 import natsort
 
 EMPTY_VERSION = '0.0.0'  # default version when are no versions yet
@@ -100,7 +100,7 @@ class SemverVersion(BaseVersion):
         max_ver = self._empty_version
         for version in self.versions:
             try:
-                max_ver = semver.max_ver(max_ver, version)
+                max_ver = str(max(map(VersionInfo.parse, (max_ver, version))))
             except ValueError:
                 pass  # ignoring not semver valid versions.
         return max_ver
@@ -120,10 +120,12 @@ class SemverVersion(BaseVersion):
         part = kwargs.get('part', 'minor')
         bump_method_name = self._get_semver_bump_methods_map()[part]
         latest_ver = self.get_latest_version()
-        return getattr(semver, bump_method_name)(latest_ver)
+        return str(
+            getattr(VersionInfo.parse(latest_ver), bump_method_name)()
+        )
 
     def check_version(self, version: str) -> bool:
         """Override to check if version is semver valid."""
         result = super().check_version(version)
-        semver.parse(version)
+        VersionInfo.parse(version).to_dict()
         return result

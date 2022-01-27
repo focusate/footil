@@ -1,14 +1,19 @@
-.. image:: https://travis-ci.com/focusate/footil.svg?branch=master
-    :target: https://travis-ci.com/focusate/footil
+Various Helper Modules
+######################
 
-Various helper modules
-======================
-
-- **date** - date manipulation helpers.
+- **date**, **datetime**, **time** - date/datetime/time manipulation helpers.
 - **decor** - helper decorators.
-- **log** - helpers with stdout, stderr management, logging setup.
+- **file** - file manipulation helpers.
 - **formatting** - string formatting.
+- **log** - helpers with stdout, stderr management, logging setup.
+- **parsing** - parse arbitrary data using various helpers.
 - **path** - functions for paths manipulation.
+- **patterns** - design pattern helper classes for better re-usability.
+- **sorting** - sorting helpers.
+- **version** - manage version validation and bumping.
+- **xcollections** - functions for collections.
+- **xdata** - data manipulation helpers.
+- **xiter** - iteration helpers.
 - **xtyping** - type checking.
 
 Source code in:
